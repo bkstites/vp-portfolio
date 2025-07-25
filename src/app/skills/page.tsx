@@ -32,6 +32,12 @@ export default function SkillsPage() {
           <p className="text-gray-700">M.S. in Business Analytics, Rutgers University (Expected Dec 2025)</p>
           <p className="text-gray-700">B.S. in Psychology & Neuroscience, Rowan University</p>
         </div>
+        <div className="mt-6 text-center">
+          <h2 className="text-xl font-bold text-blue-800 mb-2 drop-shadow">Certifications</h2>
+          <p className="text-gray-700">AWS Cloud Practitioner</p>
+          <p className="text-gray-700">National Registry Paramedic</p>
+          <p className="text-gray-700">Pennsylvania State Paramedic License</p>
+        </div>
       </div>
     </main>
   );
