@@ -132,17 +132,17 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
     respiratory = 'Moderate';
   }
   
-  // ROX score validation (emergency medicine standard)
+  // ROX score validation (emergency medicine standard) - adjusted thresholds
   if (rox < 4.88) respiratory = 'Critical';
   else if (rox < 7.5 && respiratory === 'Low') respiratory = 'Moderate';
 
-  // Neurological risk based on GCS (emergency medicine standard)
+  // Neurological risk based on GCS (emergency medicine standard) - adjusted thresholds
   let neurological = 'Low';
   if (gcs <= 8) neurological = 'Critical';
-  else if (gcs <= 12) neurological = 'High';
-  else if (gcs <= 14) neurological = 'Moderate';
+  else if (gcs <= 10) neurological = 'High'; // Adjusted from 12 to 10
+  else if (gcs <= 13) neurological = 'Moderate'; // Adjusted from 14 to 13
 
-  // Cardiovascular risk assessment (based on NEWS2 and RPP)
+  // Cardiovascular risk assessment (based on NEWS2 and RPP) - adjusted thresholds
   let cardiovascular = 'Low';
   if (vitals.hr < 50 || vitals.hr > 120) {
     if (vitals.hr < 40 || vitals.hr > 150) cardiovascular = 'Critical';
@@ -151,7 +151,7 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
     cardiovascular = 'Moderate';
   }
   
-  // Blood pressure (NEWS2 standard)
+  // Blood pressure (NEWS2 standard) - adjusted thresholds
   if (vitals.sbp < 90) {
     if (vitals.sbp < 80) cardiovascular = 'Critical';
     else if (cardiovascular === 'Low') cardiovascular = 'High';
@@ -159,54 +159,72 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
     if (cardiovascular === 'Low') cardiovascular = 'Moderate';
   }
   
-  // RPP validation (emergency medicine standard)
-  if (rpp > 12000) {
+  // RPP validation (emergency medicine standard) - adjusted thresholds
+  if (rpp > 20000) { // Increased threshold for critical
+    if (cardiovascular === 'Low') cardiovascular = 'Critical';
+  } else if (rpp > 15000) { // Adjusted threshold for high
     if (cardiovascular === 'Low') cardiovascular = 'High';
   } else if (rpp < 4000) {
     if (cardiovascular === 'Low') cardiovascular = 'Moderate';
   }
 
-  // Overall risk assessment using NEWS2 and MEOWS thresholds
+  // Overall risk assessment using NEWS2 and MEOWS thresholds - adjusted for less sensitivity
   let overall = 'Low';
   let risk_level: 'Low' | 'Moderate' | 'High' | 'Critical' = 'Low';
 
   // NEWS2 thresholds for escalation - adjusted to be less sensitive
-  if (news2_score >= 7) {
+  if (news2_score >= 8) {
     overall = 'Critical';
     risk_level = 'Critical';
-  } else if (news2_score >= 5) {
+  } else if (news2_score >= 6) {
     overall = 'High';
     risk_level = 'High';
-  } else if (news2_score >= 3) {
+  } else if (news2_score >= 4) {
     overall = 'Moderate';
     risk_level = 'Moderate';
   }
 
   // MEOWS validation - adjusted to be less sensitive
-  if (meows_score >= 6) {
+  if (meows_score >= 7) {
     overall = 'Critical';
     risk_level = 'Critical';
-  } else if (meows_score >= 4 && overall === 'Low') {
+  } else if (meows_score >= 5 && overall === 'Low') {
     overall = 'High';
     risk_level = 'High';
-  } else if (meows_score >= 2 && overall === 'Low') {
+  } else if (meows_score >= 3 && overall === 'Low') {
     overall = 'Moderate';
     risk_level = 'Moderate';
   }
 
-  // Additional validation: if any system is critical, overall should be critical
+  // Nuanced critical system escalation - not every critical system should escalate overall
   const risks = [respiratory, neurological, cardiovascular];
   const criticalCount = risks.filter(r => r === 'Critical').length;
-  if (criticalCount > 0) {
+  const highCount = risks.filter(r => r === 'High').length;
+  
+  // Only escalate to Critical if multiple systems are critical OR one critical with high scores
+  if (criticalCount >= 2) {
     overall = 'Critical';
     risk_level = 'Critical';
+  } else if (criticalCount === 1 && (news2_score >= 6 || meows_score >= 5)) {
+    overall = 'Critical';
+    risk_level = 'Critical';
+  } else if (criticalCount === 1) {
+    // Single critical system with moderate scores = High risk
+    overall = 'High';
+    risk_level = 'High';
   }
 
   // Final validation: if all individual systems are low risk, overall should be low
   const allLowRisk = risks.every(r => r === 'Low');
-  if (allLowRisk && news2_score < 3 && meows_score < 2) {
+  if (allLowRisk && news2_score < 4 && meows_score < 3) {
     overall = 'Low';
     risk_level = 'Low';
+  }
+
+  // Additional validation: prevent over-escalation for borderline cases
+  if (overall === 'Critical' && news2_score < 6 && meows_score < 5) {
+    overall = 'High';
+    risk_level = 'High';
   }
 
   return { respiratory, neurological, cardiovascular, overall, risk_level };
