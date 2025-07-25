@@ -170,7 +170,7 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
   let overall = 'Low';
   let risk_level: 'Low' | 'Moderate' | 'High' | 'Critical' = 'Low';
 
-  // NEWS2 thresholds for escalation
+  // NEWS2 thresholds for escalation - adjusted to be less sensitive
   if (news2_score >= 7) {
     overall = 'Critical';
     risk_level = 'Critical';
@@ -182,7 +182,7 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
     risk_level = 'Moderate';
   }
 
-  // MEOWS validation
+  // MEOWS validation - adjusted to be less sensitive
   if (meows_score >= 6) {
     overall = 'Critical';
     risk_level = 'Critical';
@@ -200,6 +200,13 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
   if (criticalCount > 0) {
     overall = 'Critical';
     risk_level = 'Critical';
+  }
+
+  // Final validation: if all individual systems are low risk, overall should be low
+  const allLowRisk = risks.every(r => r === 'Low');
+  if (allLowRisk && news2_score < 3 && meows_score < 2) {
+    overall = 'Low';
+    risk_level = 'Low';
   }
 
   return { respiratory, neurological, cardiovascular, overall, risk_level };
