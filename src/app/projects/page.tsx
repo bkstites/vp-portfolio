@@ -28,39 +28,30 @@ const projects = [
       'Directed vendor management and negotiated contracts.',
       'Executed Office 365 migration and implemented endpoint management systems.'
     ]
-  },
-  {
-    title: 'New Castle County Government – Paramedic, Emergency Medical Services',
-    period: '2012 – 2017',
-    description: [
-      'Delivered high-acuity care in emergency settings.',
-      'Led incident documentation, compliance adherence, and team coordination.',
-      'Trained new EMTs in electronic systems and emergency protocols.'
-    ]
   }
 ];
 
-function ProjectCard({ title, period, description }: { title: string, period: string, description: string[] }) {
-  return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6">
-      <h3 className="text-xl font-semibold mb-1">{title}</h3>
-      <span className="text-gray-500 text-sm mb-2 block">{period}</span>
-      <ul className="list-disc list-inside text-gray-700">
-        {description.map((item, idx) => (
-          <li key={idx}>{item}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+const ProjectCard = ({ title, period, description }: { title: string, period: string, description: string[] }) => (
+  <div className="bg-white rounded-xl shadow-lg p-6 mb-8 transition-transform transform hover:-translate-y-1 hover:shadow-2xl border border-gray-100">
+    <h3 className="text-2xl font-bold text-blue-800 mb-1 tracking-tight">{title}</h3>
+    <span className="text-gray-500 text-sm mb-2 block">{period}</span>
+    <ul className="list-disc list-inside text-gray-700 mt-2 space-y-1">
+      {description.map((item, idx) => (
+        <li key={idx}>{item}</li>
+      ))}
+    </ul>
+  </div>
+);
 
 export default function ProjectsPage() {
   return (
-    <main className="max-w-3xl mx-auto py-12 px-4">
-      <h1 className="text-4xl font-bold mb-6">Professional Experience</h1>
-      {projects.map((proj, idx) => (
-        <ProjectCard key={idx} {...proj} />
-      ))}
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-5xl font-extrabold text-blue-900 mb-10 text-center drop-shadow-lg tracking-tight">Professional Experience</h1>
+        {projects.map((proj, idx) => (
+          <ProjectCard key={idx} {...proj} />
+        ))}
+      </div>
     </main>
   );
 } 
