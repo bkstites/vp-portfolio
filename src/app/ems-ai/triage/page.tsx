@@ -24,7 +24,7 @@ export default function EMSTriageForm() {
     e.preventDefault();
     setLoading(true);
     // For now, just route to results with query params (stub)
-    const params = new URLSearchParams(form as any).toString();
+    const params = new URLSearchParams(form as Record<string, string>).toString();
     router.push(`/ems-ai/results?${params}`);
   }
 
