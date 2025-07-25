@@ -4,32 +4,32 @@ const projects = [
   {
     title: 'Capital One – Risk Manager, SOX Analytics & Reporting',
     period: '2021 – Present',
-    impact: 'Driving operational excellence and risk reduction through data-driven leadership and automation.',
+    impact: 'Transformed risk management by building data-driven insights and empowering teams with automation and AI.',
     description: [
-      'Led a 12-person team to deliver SOX control testing and analytics for 500+ cloud-native controls, ensuring compliance and uptime.',
-      'Automated IAM reconciliation with Snowflake/Python, reducing manual review time by 60% and boosting audit reliability.',
-      'Improved data governance by overseeing policy analysis for 1,500+ S3 buckets.',
-      'Transitioned controls from spreadsheets to Python/SQL-based audit tooling, increasing automation and repeatability.'
+      'Led a 12-person team to deliver actionable metrics and analytics for 500+ cloud-native controls, driving smarter business decisions.',
+      'Automated IAM reconciliation with Snowflake/Python, reducing manual review time by 60% and enabling real-time insights.',
+      'Improved data governance by overseeing policy analysis for 1,500+ S3 buckets, making data more accessible and secure.',
+      'Transitioned controls from spreadsheets to Python/SQL-based audit tooling, empowering associates with modern, AI-enabled processes.'
     ]
   },
   {
     title: 'Capital One – Sr. Associate → Principal Associate, Technology Risk Management',
     period: '2018 – 2021',
-    impact: 'Enabled resilient infrastructure and compliance through cross-team collaboration and risk management.',
+    impact: 'Enabled business growth and compliance by translating data into insights and fostering a culture of continuous improvement.',
     description: [
-      'Conducted infrastructure risk assessments across AWS and on-prem systems.',
-      'Built and maintained centralized control dashboards for infrastructure SLAs and risk exposure.',
-      'Led workshops to streamline issue resolution and clarify control ownership.'
+      'Conducted risk assessments and built dashboards that turned infrastructure data into actionable business intelligence.',
+      'Collaborated across teams to clarify ownership and streamline processes, empowering associates to resolve issues faster.',
+      'Supported automation projects that made compliance and onboarding more intuitive for everyone.'
     ]
   },
   {
     title: 'Mauricetown Truck Repair – Business Systems Administrator',
     period: '2017 – 2021',
-    impact: 'Modernized IT operations and empowered business growth through hands-on leadership and vendor management.',
+    impact: 'Modernized business operations by integrating data, automation, and people-first technology solutions.',
     description: [
-      'Designed and maintained the company’s entire IT infrastructure.',
-      'Directed vendor management and negotiated contracts.',
-      'Executed Office 365 migration and implemented endpoint management systems.'
+      'Designed and maintained IT systems that provided real-time business metrics and improved decision-making.',
+      'Directed vendor management and implemented tools that empowered staff to work smarter, not harder.',
+      'Executed Office 365 migration and endpoint management to make technology accessible and effective for all associates.'
     ]
   }
 ];

@@ -6,7 +6,7 @@ export default function ContactPage() {
       <div className="bg-white/80 rounded-xl shadow-lg p-8 max-w-2xl w-full">
         <h1 className="text-4xl font-extrabold text-blue-900 mb-4 drop-shadow-lg tracking-tight text-center">Let’s Connect</h1>
         <p className="mb-6 text-lg text-gray-800 text-center">
-          I’m always open to connecting with fellow technologists, leaders, and organizations who share a passion for building resilient, people-focused systems. Whether you want to collaborate, discuss leadership, or explore how AI can empower your team—reach out!
+          Interested in building a more data-driven, empowered organization? I’m always open to connecting with leaders and teams who want to use business insights and AI to bridge technology gaps and unlock new potential for their people.
         </p>
         <form className="bg-blue-50 rounded-lg shadow p-6 space-y-4 max-w-md mx-auto">
           <div>

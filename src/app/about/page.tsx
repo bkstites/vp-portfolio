@@ -17,18 +17,18 @@ export default function AboutPage() {
         </div>
         <h1 className="text-4xl font-extrabold text-blue-900 mb-4 drop-shadow-lg tracking-tight text-center">About Bryan Stites</h1>
         <p className="mb-6 text-lg text-gray-800">
-          I’m Bryan Stites, a technology leader with over a decade of experience at the intersection of operations, systems, and people. I build infrastructure that’s reliable, secure, and designed for real-world users. Having grown up and worked in South Jersey, I’m personally invested in strengthening the technology backbone of our region.
+          I’m Bryan Stites, a business insights leader passionate about using data and AI to drive meaningful change. My focus is on unlocking actionable metrics, informing business processes, and empowering associates with technology that truly bridges the gap between people and platforms.
         </p>
         <section className="mb-6">
           <h2 className="text-2xl font-bold text-blue-800 mb-2 drop-shadow">Leadership Style</h2>
           <p className="text-gray-700">
-            My approach to leadership is people-first. Whether supporting engineers, vendors, or senior stakeholders, I bring clarity, steady direction, and accountability. I believe in building resilient, adaptable systems and mentoring high-performing teams to deliver meaningful, local impact.
+            My approach is people-first and insight-driven. I believe in mentoring teams, fostering curiosity, and using data to illuminate opportunities for growth. By equipping associates with the right tools and AI-powered solutions, I help organizations make smarter, faster decisions.
           </p>
         </section>
         <section>
-          <h2 className="text-2xl font-bold text-blue-800 mb-2 drop-shadow">Local Commitment</h2>
+          <h2 className="text-2xl font-bold text-blue-800 mb-2 drop-shadow">Empowering People</h2>
           <p className="text-gray-700">
-            I’m passionate about serving South Jersey and helping organizations modernize and secure their technology infrastructure for the future.
+            I’m passionate about making technology accessible and impactful—bringing superpowers to people at every level of the organization.
           </p>
         </section>
       </div>
