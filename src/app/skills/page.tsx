@@ -1,36 +1,34 @@
 import React from 'react';
 
 const skills = [
-  'VMWare', 'GoogleSuite', 'Microsoft 365', 'ServiceNow', 'S3', 'IAM', 'Cisco',
-  'AWS', 'Snowflake', 'Postgres', 'Python', 'SQL', 'Jupyter Notebooks',
-  'Jira', 'WDesk', 'Google Workspace', 'App Script',
-];
-
-const certifications = [
-  'ITIL-aligned process knowledge',
-  'Valid Driver’s License',
-  'Active pursuit of M.S. in Business Analytics',
+  'Infrastructure Leadership',
+  'Cloud & On-Prem Architecture',
+  'Automation & Analytics',
+  'Risk Management',
+  'Team Building & Mentorship',
+  'Vendor & Stakeholder Relations',
+  'AWS', 'Snowflake', 'Python', 'SQL', 'ServiceNow', 'Microsoft 365', 'VMWare',
 ];
 
 export default function SkillsPage() {
   return (
-    <main className="max-w-3xl mx-auto py-12 px-4">
-      <h1 className="text-4xl font-bold mb-6">Technical Skills</h1>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-        {skills.map(skill => (
-          <span key={skill} className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium shadow">
-            {skill}
-          </span>
-        ))}
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 py-12 px-4 flex flex-col items-center justify-center">
+      <div className="bg-white/80 rounded-xl shadow-lg p-8 max-w-2xl w-full">
+        <h1 className="text-4xl font-extrabold text-blue-900 mb-4 drop-shadow-lg tracking-tight text-center">My Strengths</h1>
+        <p className="mb-6 text-lg text-gray-800 text-center">
+          I lead with a blend of technical depth and people-first leadership. My experience spans cloud and on-prem infrastructure, automation, risk management, and building high-performing teams. I believe in empowering technologists to do their best work—by providing clarity, mentorship, and the right tools.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3 mb-6">
+          {skills.map(skill => (
+            <span key={skill} className="inline-block bg-blue-100 text-blue-900 px-4 py-2 rounded-full text-sm font-semibold shadow hover:bg-blue-200 transition cursor-pointer" tabIndex={0} aria-label={skill}>{skill}</span>
+          ))}
+        </div>
+        <div className="mt-4 text-center">
+          <h2 className="text-xl font-bold text-blue-800 mb-2 drop-shadow">Education</h2>
+          <p className="text-gray-700">M.S. in Business Analytics, Rutgers University (Expected Dec 2025)</p>
+          <p className="text-gray-700">B.S. in Psychology & Neuroscience, Rowan University</p>
+        </div>
       </div>
-      <h2 className="text-2xl font-semibold mb-2">Certifications & Education</h2>
-      <ul className="list-disc list-inside">
-        {certifications.map(cert => (
-          <li key={cert}>{cert}</li>
-        ))}
-        <li>Rutgers University – Camden, NJ: M.S. in Business Analytics, Expected Dec 2025</li>
-        <li>Rowan University – Glassboro, NJ: B.S. in Psychology & Neuroscience</li>
-      </ul>
     </main>
   );
 } 
