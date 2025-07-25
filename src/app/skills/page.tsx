@@ -3,6 +3,8 @@ import React from 'react';
 const skills = [
   'Business Insights',
   'Data-Driven Leadership',
+  'Leadership',
+  'Community Building',
   'Metrics & Analytics',
   'AI Empowerment',
   'Process Optimization',
