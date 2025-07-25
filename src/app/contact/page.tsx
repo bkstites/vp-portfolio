@@ -5,7 +5,8 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    setSubmitted(true);
+    // Let the browser submit the form to Formsubmit, then show thank you message
+    setTimeout(() => setSubmitted(true), 1000); // fallback in case redirect fails
   }
 
   return (
@@ -25,8 +26,10 @@ export default function ContactPage() {
             method="POST"
             className="bg-blue-50 rounded-lg shadow p-6 space-y-4 max-w-md mx-auto"
             onSubmit={handleSubmit}
+            target="_blank"
           >
             <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_next" value="/contact?success=true" />
             {/* Honeypot field for spam protection */}
             <div style={{ display: 'none' }}>
               <label>Leave this field blank</label>
@@ -34,15 +37,15 @@ export default function ContactPage() {
             </div>
             <div>
               <label className="block mb-1 font-medium text-blue-900">Name</label>
-              <input type="text" name="name" required className="w-full border border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Your name" />
+              <input type="text" name="name" required className="w-full border border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" placeholder="Your name" />
             </div>
             <div>
               <label className="block mb-1 font-medium text-blue-900">Email</label>
-              <input type="email" name="email" required className="w-full border border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Your email" />
+              <input type="email" name="email" required className="w-full border border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" placeholder="Your email" />
             </div>
             <div>
               <label className="block mb-1 font-medium text-blue-900">Message</label>
-              <textarea name="message" required className="w-full border border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" rows={4} placeholder="Your message" />
+              <textarea name="message" required className="w-full border border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900" rows={4} placeholder="Your message" />
             </div>
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700 transition">Send</button>
           </form>
