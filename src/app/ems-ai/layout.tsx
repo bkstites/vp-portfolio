@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import Footer from '../../components/Footer';
 
 export default function EMSLayout({ children }: { children: React.ReactNode }) {
   const [dark, setDark] = useState(false);
@@ -18,7 +17,6 @@ export default function EMSLayout({ children }: { children: React.ReactNode }) {
       <main className="flex flex-col items-center justify-center flex-1 w-full px-4 py-8 min-h-[80vh]">
         {children}
       </main>
-      <Footer />
     </div>
   );
 } 
