@@ -1,3 +1,4 @@
+'use client';
 import EMSLayout from '../layout';
 import { useSearchParams } from 'next/navigation';
 
