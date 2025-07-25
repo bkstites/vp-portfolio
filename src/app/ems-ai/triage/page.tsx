@@ -34,7 +34,7 @@ export default function EMSTriageForm() {
         <div className="bg-white/80 rounded-xl shadow-lg p-8 max-w-2xl w-full">
           <h1 className="text-4xl font-extrabold text-blue-900 mb-4 drop-shadow-lg tracking-tight text-center">Enter Patient Vitals</h1>
           <p className="mb-6 text-lg text-gray-800 text-center">
-            Enter the patient's vital signs and Glasgow Coma Scale scores to receive real-time risk predictions powered by machine learning.
+            Enter the patient&apos;s vital signs and Glasgow Coma Scale scores to receive real-time risk predictions powered by machine learning.
           </p>
           <form onSubmit={handleSubmit} className="bg-blue-50 rounded-lg shadow p-6 space-y-4 max-w-lg mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
