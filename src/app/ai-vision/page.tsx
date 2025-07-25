@@ -5,10 +5,6 @@ export default function AIVisionPage() {
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 py-12 px-4 flex flex-col items-center justify-center">
       <div className="bg-white/80 rounded-xl shadow-lg p-8 max-w-3xl w-full">
         <h1 className="text-4xl font-extrabold text-blue-900 mb-4 drop-shadow-lg tracking-tight text-center">AI Vision</h1>
-        
-        <div className="bg-blue-100 border-l-4 border-blue-500 p-4 mb-6 rounded shadow text-blue-900 text-center font-semibold">
-          &quot;AI is the great equalizer—bringing advanced capabilities to every associate, and transforming data into action.&quot;
-        </div>
 
         <p className="mb-6 text-lg text-gray-800 text-center">
           My vision is to demonstrate how AI tools can eliminate traditional barriers to development and innovation—showing how intelligent systems give humans super powers to build, deploy, and scale solutions that were previously out of reach.
@@ -34,8 +30,8 @@ export default function AIVisionPage() {
               Here&apos;s what AI-powered development delivers:
             </p>
             <ul className="text-sm text-purple-700 space-y-1">
-              <li>• <strong>90% Faster</strong> development cycles with AI assistance</li>
-              <li>• <strong>Zero Latency</strong> in code generation and problem-solving</li>
+              <li>• <strong>Significantly Faster</strong> development cycles with AI assistance</li>
+              <li>• <strong>Reduced Development Time</strong> through intelligent code generation</li>
               <li>• <strong>Rapid Deployment</strong> from concept to production</li>
               <li>• <strong>Democratized Development</strong> - anyone can build powerful tools</li>
             </ul>
