@@ -6,7 +6,7 @@ const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/skills', label: 'Skills' },
   { href: '/ai-vision', label: 'AI Vision' },
-  { href: '/projects', label: 'Projects' },
+  { href: '/projects', label: 'Resume' }, // Renamed from Projects to Resume
   { href: '/contact', label: 'Contact' },
 ];
 
