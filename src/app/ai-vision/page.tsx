@@ -17,7 +17,7 @@ export default function AIVisionPage() {
               Modern AI tools are transforming how we build and deploy solutions:
             </p>
             <ul className="text-sm text-green-700 space-y-1">
-              <li>• <strong>Cursor.ai & LLMs:</strong> Code generation and problem-solving at human speed</li>
+              <li>• <strong>Agentic AI & LLMs:</strong> Code generation and problem-solving at human speed</li>
               <li>• <strong>Process Automation:</strong> Eliminate repetitive tasks and reduce overhead</li>
               <li>• <strong>Rapid Prototyping:</strong> Build complex systems in days, not months</li>
               <li>• <strong>Intelligent Interfaces:</strong> Create user experiences that adapt and learn</li>
@@ -49,7 +49,7 @@ export default function AIVisionPage() {
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-800 mb-1">2</div>
               <div className="font-semibold text-blue-900">Leverage AI Tools</div>
-              <div className="text-blue-700">Use Cursor.ai, LLMs, and intelligent systems to accelerate development</div>
+              <div className="text-blue-700">Use Agentic AI, LLMs, and intelligent systems to accelerate development</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-800 mb-1">3</div>
