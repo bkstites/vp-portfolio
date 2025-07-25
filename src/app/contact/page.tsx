@@ -4,6 +4,10 @@ import React, { useState } from 'react';
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    setSubmitted(true);
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 py-12 px-4 flex flex-col items-center justify-center">
       <div className="bg-white/80 rounded-xl shadow-lg p-8 max-w-2xl w-full">
@@ -20,9 +24,14 @@ export default function ContactPage() {
             action="https://formsubmit.co/bryankstites@gmail.com"
             method="POST"
             className="bg-blue-50 rounded-lg shadow p-6 space-y-4 max-w-md mx-auto"
-            onSubmit={() => setSubmitted(true)}
+            onSubmit={handleSubmit}
           >
             <input type="hidden" name="_captcha" value="false" />
+            {/* Honeypot field for spam protection */}
+            <div style={{ display: 'none' }}>
+              <label>Leave this field blank</label>
+              <input type="text" name="_honey" tabIndex={-1} autoComplete="off" />
+            </div>
             <div>
               <label className="block mb-1 font-medium text-blue-900">Name</label>
               <input type="text" name="name" required className="w-full border border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Your name" />
