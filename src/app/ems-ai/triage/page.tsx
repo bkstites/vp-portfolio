@@ -23,9 +23,35 @@ export default function EMSTriageForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    // For now, just route to results with query params (stub)
-    const params = new URLSearchParams(form as Record<string, string>).toString();
-    router.push(`/ems-ai/results?${params}`);
+    
+    try {
+      const response = await fetch('/api/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get prediction');
+      }
+
+      const result = await response.json();
+      
+      // Route to results with the prediction data
+      const params = new URLSearchParams({
+        ...form,
+        ...result,
+      }).toString();
+      
+      router.push(`/ems-ai/results?${params}`);
+    } catch (error) {
+      console.error('Prediction error:', error);
+      alert('Failed to get prediction. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
