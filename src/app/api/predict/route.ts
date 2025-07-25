@@ -40,18 +40,28 @@ function calculateRPP(hr: number, sbp: number): number {
   return hr * sbp;
 }
 
-// Determine risk levels based on scores
-function determineRiskLevels(rox: number, gcs: number, rpp: number): {
+// Determine risk levels based on clinical standards
+function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: number): {
   respiratory: string;
   neurological: string;
   cardiovascular: string;
   overall: string;
   risk_level: 'Low' | 'Moderate' | 'High' | 'Critical';
 } {
-  // Respiratory risk based on ROX score
+  // Respiratory risk assessment
   let respiratory = 'Low';
-  if (rox < 4.88) respiratory = 'High';
-  else if (rox < 7.5) respiratory = 'Moderate';
+  if (vitals.spo2 < 90) {
+    if (vitals.spo2 < 85) respiratory = 'Critical';
+    else respiratory = 'High';
+  } else if (vitals.rr > 25 || vitals.rr < 10) {
+    respiratory = 'High';
+  } else if (vitals.rr > 20 || vitals.rr < 12) {
+    respiratory = 'Moderate';
+  }
+  
+  // Additional ROX score consideration
+  if (rox < 4.88) respiratory = 'Critical';
+  else if (rox < 7.5 && respiratory === 'Low') respiratory = 'Moderate';
 
   // Neurological risk based on GCS
   let neurological = 'Low';
@@ -59,12 +69,31 @@ function determineRiskLevels(rox: number, gcs: number, rpp: number): {
   else if (gcs <= 12) neurological = 'High';
   else if (gcs <= 14) neurological = 'Moderate';
 
-  // Cardiovascular risk based on RPP
+  // Cardiovascular risk assessment
   let cardiovascular = 'Low';
-  if (rpp > 12000) cardiovascular = 'High';
-  else if (rpp > 8000) cardiovascular = 'Moderate';
+  if (vitals.hr < 50 || vitals.hr > 120) {
+    if (vitals.hr < 40 || vitals.hr > 150) cardiovascular = 'Critical';
+    else cardiovascular = 'High';
+  } else if (vitals.hr < 60 || vitals.hr > 100) {
+    cardiovascular = 'Moderate';
+  }
+  
+  // Blood pressure consideration
+  if (vitals.sbp < 90) {
+    if (vitals.sbp < 80) cardiovascular = 'Critical';
+    else if (cardiovascular === 'Low') cardiovascular = 'High';
+  } else if (vitals.sbp > 180) {
+    if (cardiovascular === 'Low') cardiovascular = 'Moderate';
+  }
+  
+  // RPP consideration for additional context
+  if (rpp > 12000) {
+    if (cardiovascular === 'Low') cardiovascular = 'High';
+  } else if (rpp < 4000) {
+    if (cardiovascular === 'Low') cardiovascular = 'Moderate';
+  }
 
-  // Overall risk assessment
+  // Overall risk assessment - prioritize critical vital signs
   const risks = [respiratory, neurological, cardiovascular];
   const criticalCount = risks.filter(r => r === 'Critical').length;
   const highCount = risks.filter(r => r === 'High').length;
@@ -113,8 +142,8 @@ export async function POST(request: NextRequest) {
     const gcs_total = calculateGCSTotal(vitals.gcs_eye, vitals.gcs_verbal, vitals.gcs_motor);
     const rpp_score = calculateRPP(vitals.hr, vitals.sbp);
 
-    // Determine risk levels
-    const riskAssessment = determineRiskLevels(rox_score, gcs_total, rpp_score);
+    // Determine risk levels with improved clinical logic
+    const riskAssessment = determineRiskLevels(vitals, rox_score, gcs_total, rpp_score);
 
     const result: PredictionResult = {
       rox_score: Math.round(rox_score * 100) / 100, // Round to 2 decimal places
