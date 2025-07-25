@@ -20,6 +20,10 @@ export default function EMSTriageForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  function handleGCSChange(component: string, value: string) {
+    setForm({ ...form, [component]: value });
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -80,7 +84,7 @@ export default function EMSTriageForm() {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-blue-700">
-                    Enter patient vital signs and Glasgow Coma Scale scores. This assessment will provide risk stratification and resource allocation recommendations.
+                    Enter patient vital signs and complete the Glasgow Coma Scale assessment. This assessment will provide risk stratification and resource allocation recommendations.
                   </p>
                 </div>
               </div>
@@ -90,15 +94,14 @@ export default function EMSTriageForm() {
           {/* Assessment Form */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900">Vital Signs Assessment</h2>
+              <h2 className="text-lg font-medium text-gray-900">Patient Assessment</h2>
             </div>
             
             <form onSubmit={handleSubmit} className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Vital Signs Section */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium text-gray-700 uppercase tracking-wide">Vital Signs</h3>
-                  
+              {/* Vital Signs Section */}
+              <div className="mb-8">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Vital Signs</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       SpO₂ (%)
@@ -167,62 +170,248 @@ export default function EMSTriageForm() {
                     />
                   </div>
                 </div>
+              </div>
 
-                {/* GCS Section */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium text-gray-700 uppercase tracking-wide">Glasgow Coma Scale</h3>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Eye Opening (1-4)
+              {/* Glasgow Coma Scale Section */}
+              <div className="mb-8">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Glasgow Coma Scale Assessment</h3>
+                
+                {/* Eye Opening */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Eye Opening Response</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_eye" 
+                        value="4" 
+                        checked={form.gcs_eye === '4'} 
+                        onChange={(e) => handleGCSChange('gcs_eye', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>4 - Spontaneous:</strong> Eyes open without stimulation
+                      </span>
                     </label>
-                    <input 
-                      type="number" 
-                      name="gcs_eye" 
-                      min="1" 
-                      max="4" 
-                      required 
-                      value={form.gcs_eye} 
-                      onChange={handleChange} 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
-                      placeholder="4"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Verbal Response (1-5)
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_eye" 
+                        value="3" 
+                        checked={form.gcs_eye === '3'} 
+                        onChange={(e) => handleGCSChange('gcs_eye', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>3 - To Voice:</strong> Eyes open to verbal command
+                      </span>
                     </label>
-                    <input 
-                      type="number" 
-                      name="gcs_verbal" 
-                      min="1" 
-                      max="5" 
-                      required 
-                      value={form.gcs_verbal} 
-                      onChange={handleChange} 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
-                      placeholder="5"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Motor Response (1-6)
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_eye" 
+                        value="2" 
+                        checked={form.gcs_eye === '2'} 
+                        onChange={(e) => handleGCSChange('gcs_eye', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>2 - To Pain:</strong> Eyes open to painful stimulus
+                      </span>
                     </label>
-                    <input 
-                      type="number" 
-                      name="gcs_motor" 
-                      min="1" 
-                      max="6" 
-                      required 
-                      value={form.gcs_motor} 
-                      onChange={handleChange} 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
-                      placeholder="6"
-                    />
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_eye" 
+                        value="1" 
+                        checked={form.gcs_eye === '1'} 
+                        onChange={(e) => handleGCSChange('gcs_eye', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>1 - None:</strong> No eye opening to any stimulus
+                      </span>
+                    </label>
                   </div>
                 </div>
+
+                {/* Verbal Response */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Verbal Response</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_verbal" 
+                        value="5" 
+                        checked={form.gcs_verbal === '5'} 
+                        onChange={(e) => handleGCSChange('gcs_verbal', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>5 - Oriented:</strong> Patient is alert and oriented to person, place, and time
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_verbal" 
+                        value="4" 
+                        checked={form.gcs_verbal === '4'} 
+                        onChange={(e) => handleGCSChange('gcs_verbal', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>4 - Confused:</strong> Patient responds but is confused or disoriented
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_verbal" 
+                        value="3" 
+                        checked={form.gcs_verbal === '3'} 
+                        onChange={(e) => handleGCSChange('gcs_verbal', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>3 - Inappropriate Words:</strong> Patient speaks but words are inappropriate or random
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_verbal" 
+                        value="2" 
+                        checked={form.gcs_verbal === '2'} 
+                        onChange={(e) => handleGCSChange('gcs_verbal', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>2 - Incomprehensible Sounds:</strong> Patient makes sounds but no words
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_verbal" 
+                        value="1" 
+                        checked={form.gcs_verbal === '1'} 
+                        onChange={(e) => handleGCSChange('gcs_verbal', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>1 - None:</strong> No verbal response
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Motor Response */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Motor Response</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_motor" 
+                        value="6" 
+                        checked={form.gcs_motor === '6'} 
+                        onChange={(e) => handleGCSChange('gcs_motor', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>6 - Obeys Commands:</strong> Patient follows simple commands
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_motor" 
+                        value="5" 
+                        checked={form.gcs_motor === '5'} 
+                        onChange={(e) => handleGCSChange('gcs_motor', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>5 - Localizes Pain:</strong> Patient moves toward painful stimulus
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_motor" 
+                        value="4" 
+                        checked={form.gcs_motor === '4'} 
+                        onChange={(e) => handleGCSChange('gcs_motor', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>4 - Withdraws from Pain:</strong> Patient pulls away from painful stimulus
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_motor" 
+                        value="3" 
+                        checked={form.gcs_motor === '3'} 
+                        onChange={(e) => handleGCSChange('gcs_motor', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>3 - Flexion to Pain:</strong> Patient flexes in response to pain (decorticate)
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_motor" 
+                        value="2" 
+                        checked={form.gcs_motor === '2'} 
+                        onChange={(e) => handleGCSChange('gcs_motor', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>2 - Extension to Pain:</strong> Patient extends in response to pain (decerebrate)
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input 
+                        type="radio" 
+                        name="gcs_motor" 
+                        value="1" 
+                        checked={form.gcs_motor === '1'} 
+                        onChange={(e) => handleGCSChange('gcs_motor', e.target.value)}
+                        className="mr-3"
+                      />
+                      <span className="text-sm text-gray-700">
+                        <strong>1 - None:</strong> No motor response
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* GCS Summary */}
+                {form.gcs_eye && form.gcs_verbal && form.gcs_motor && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                    <h5 className="text-sm font-medium text-blue-900 mb-2">GCS Summary</h5>
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span className="text-blue-700">Eye:</span> {form.gcs_eye}/4
+                      </div>
+                      <div>
+                        <span className="text-blue-700">Verbal:</span> {form.gcs_verbal}/5
+                      </div>
+                      <div>
+                        <span className="text-blue-700">Motor:</span> {form.gcs_motor}/6
+                      </div>
+                    </div>
+                    <div className="mt-2 text-sm font-medium text-blue-900">
+                      Total: {parseInt(form.gcs_eye) + parseInt(form.gcs_verbal) + parseInt(form.gcs_motor)}/15
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="mt-8 pt-6 border-t border-gray-200">
