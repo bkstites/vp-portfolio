@@ -58,14 +58,28 @@ export default function EMSTriageForm() {
     <EMSLayout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 py-12 px-4 flex flex-col items-center justify-center">
         <div className="bg-white/80 rounded-xl shadow-lg p-8 max-w-2xl w-full">
-          <h1 className="text-4xl font-extrabold text-blue-900 mb-4 drop-shadow-lg tracking-tight text-center">Enter Patient Vitals</h1>
-          <p className="mb-6 text-lg text-gray-800 text-center">
-            Enter the patient&apos;s vital signs and Glasgow Coma Scale scores to receive real-time risk predictions powered by machine learning.
-          </p>
+          <div className="text-center mb-6">
+            <h1 className="text-4xl font-extrabold text-red-900 mb-2 drop-shadow-lg tracking-tight">EMERGENCY PATIENT ASSESSMENT</h1>
+            <p className="text-lg text-gray-700 font-medium">Real-time risk assessment for dispatch escalation and field guidance</p>
+          </div>
+
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded shadow">
+            <div className="flex items-center mb-2">
+              <span className="text-2xl mr-2">🚨</span>
+              <h3 className="text-lg font-bold text-red-900">Dispatch Communication Tool</h3>
+            </div>
+            <p className="text-red-800 text-sm">
+              This assessment will automatically calculate risk levels and provide guidance for dispatch escalation. 
+              Use standard field measurements - no special equipment required.
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit} className="bg-blue-50 rounded-lg shadow p-6 space-y-4 max-w-lg mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-1 font-medium text-blue-900">SpO₂ (%)</label>
+                <label className="block mb-1 font-medium text-blue-900">
+                  SpO₂ (%) <span className="text-sm text-gray-600">- Pulse oximeter reading</span>
+                </label>
                 <input 
                   type="number" 
                   name="spo2" 
@@ -79,7 +93,9 @@ export default function EMSTriageForm() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-medium text-blue-900">Respiratory Rate (breaths/min)</label>
+                <label className="block mb-1 font-medium text-blue-900">
+                  Respiratory Rate <span className="text-sm text-gray-600">- Breaths per minute</span>
+                </label>
                 <input 
                   type="number" 
                   name="rr" 
@@ -93,7 +109,9 @@ export default function EMSTriageForm() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-medium text-blue-900">Heart Rate (bpm)</label>
+                <label className="block mb-1 font-medium text-blue-900">
+                  Heart Rate <span className="text-sm text-gray-600">- BPM from monitor/radial pulse</span>
+                </label>
                 <input 
                   type="number" 
                   name="hr" 
@@ -107,7 +125,9 @@ export default function EMSTriageForm() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-medium text-blue-900">Systolic BP (mmHg)</label>
+                <label className="block mb-1 font-medium text-blue-900">
+                  Systolic BP <span className="text-sm text-gray-600">- Manual or automatic cuff</span>
+                </label>
                 <input 
                   type="number" 
                   name="sbp" 
@@ -121,7 +141,9 @@ export default function EMSTriageForm() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-medium text-blue-900">GCS Eye</label>
+                <label className="block mb-1 font-medium text-blue-900">
+                  GCS Eye <span className="text-sm text-gray-600">- 1-4 scale</span>
+                </label>
                 <input 
                   type="number" 
                   name="gcs_eye" 
@@ -135,7 +157,9 @@ export default function EMSTriageForm() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-medium text-blue-900">GCS Verbal</label>
+                <label className="block mb-1 font-medium text-blue-900">
+                  GCS Verbal <span className="text-sm text-gray-600">- 1-5 scale</span>
+                </label>
                 <input 
                   type="number" 
                   name="gcs_verbal" 
@@ -149,7 +173,9 @@ export default function EMSTriageForm() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-medium text-blue-900">GCS Motor</label>
+                <label className="block mb-1 font-medium text-blue-900">
+                  GCS Motor <span className="text-sm text-gray-600">- 1-6 scale</span>
+                </label>
                 <input 
                   type="number" 
                   name="gcs_motor" 
@@ -163,14 +189,36 @@ export default function EMSTriageForm() {
                 />
               </div>
             </div>
+
+            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded mb-4">
+              <div className="flex items-center mb-2">
+                <span className="text-xl mr-2">💡</span>
+                <h4 className="font-semibold text-yellow-900">Field Guidance</h4>
+              </div>
+              <p className="text-yellow-800 text-sm">
+                <strong>For less experienced responders:</strong> This tool will provide escalation recommendations and 
+                help determine if additional resources (ALS, air medical, trauma center) are needed.
+              </p>
+            </div>
+
             <button 
               type="submit" 
-              className="w-full bg-blue-600 text-white px-4 py-3 rounded font-semibold hover:bg-blue-700 transition text-lg" 
+              className="w-full bg-red-600 text-white px-4 py-3 rounded font-semibold hover:bg-red-700 transition text-lg" 
               disabled={loading}
             >
-              {loading ? 'Processing...' : 'Predict Risk'}
+              {loading ? '🔄 Processing Assessment...' : '🚨 CALCULATE RISK & GET GUIDANCE'}
             </button>
           </form>
+
+          <div className="mt-6 text-center text-sm text-gray-600">
+            <p>This assessment will provide:</p>
+            <ul className="mt-2 space-y-1">
+              <li>• Real-time risk calculation for dispatch</li>
+              <li>• Escalation recommendations for field crews</li>
+              <li>• Resource allocation guidance</li>
+              <li>• Transport priority assessment</li>
+            </ul>
+          </div>
         </div>
       </div>
     </EMSLayout>

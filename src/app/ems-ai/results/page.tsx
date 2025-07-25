@@ -40,22 +40,88 @@ function ResultsContent() {
     }
   };
 
+  // Get dispatch recommendations based on risk level
+  const getDispatchRecommendations = (riskLevel: string | null) => {
+    switch (riskLevel) {
+      case 'Critical':
+        return {
+          priority: 'IMMEDIATE',
+          resources: 'ALS + Air Medical Consideration',
+          transport: 'Trauma Center / Critical Care',
+          guidance: 'Expedite transport, consider air medical if available'
+        };
+      case 'High':
+        return {
+          priority: 'HIGH',
+          resources: 'ALS Required',
+          transport: 'Trauma Center / Hospital',
+          guidance: 'ALS transport recommended, monitor closely'
+        };
+      case 'Moderate':
+        return {
+          priority: 'MODERATE',
+          resources: 'ALS Consideration',
+          transport: 'Hospital',
+          guidance: 'Consider ALS upgrade, standard transport acceptable'
+        };
+      case 'Low':
+        return {
+          priority: 'ROUTINE',
+          resources: 'BLS Acceptable',
+          transport: 'Hospital',
+          guidance: 'BLS transport appropriate, continue monitoring'
+        };
+      default:
+        return {
+          priority: 'UNKNOWN',
+          resources: 'Assess Further',
+          transport: 'Hospital',
+          guidance: 'Reassess patient condition'
+        };
+    }
+  };
+
+  const dispatch = getDispatchRecommendations(results.risk_level);
+
   return (
     <EMSLayout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 py-12 px-4 flex flex-col items-center justify-center">
         <div className="bg-white/80 rounded-xl shadow-lg p-8 max-w-4xl w-full">
-          <h1 className="text-4xl font-extrabold text-blue-900 mb-4 drop-shadow-lg tracking-tight text-center">Risk Assessment Results</h1>
+          <h1 className="text-4xl font-extrabold text-red-900 mb-4 drop-shadow-lg tracking-tight text-center">DISPATCH ASSESSMENT RESULTS</h1>
           
           {/* Overall Risk Badge */}
           <div className="text-center mb-8">
             <span className={`inline-block px-6 py-3 rounded-full text-xl font-bold shadow-lg ${getRiskBadgeColor(results.risk_level)}`}>
-              {results.risk_level || 'Unknown'} Risk
+              {results.risk_level || 'Unknown'} RISK PATIENT
             </span>
+          </div>
+
+          {/* Dispatch Recommendations */}
+          <div className="bg-red-50 border-l-4 border-red-500 p-6 mb-6 rounded shadow">
+            <h2 className="text-2xl font-bold text-red-900 mb-4">🚨 DISPATCH RECOMMENDATIONS</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-bold text-red-800">Response Priority: <span className="text-red-600">{dispatch.priority}</span></h3>
+                <p className="text-red-700 text-sm">Recommended resource level and urgency</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-red-800">Required Resources: <span className="text-red-600">{dispatch.resources}</span></h3>
+                <p className="text-red-700 text-sm">Personnel and equipment needs</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-red-800">Transport Destination: <span className="text-red-600">{dispatch.transport}</span></h3>
+                <p className="text-red-700 text-sm">Recommended facility type</p>
+              </div>
+              <div>
+                <h3 className="font-bold text-red-800">Field Guidance: <span className="text-red-600">{dispatch.guidance}</span></h3>
+                <p className="text-red-700 text-sm">Immediate action recommendations</p>
+              </div>
+            </div>
           </div>
 
           {/* Vital Signs Summary */}
           <div className="bg-blue-50 rounded-lg p-6 mb-6">
-            <h2 className="text-2xl font-bold text-blue-800 mb-4">Patient Vitals</h2>
+            <h2 className="text-2xl font-bold text-blue-800 mb-4">📊 PATIENT VITALS</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
                 <div className="text-sm text-gray-600">SpO₂</div>
@@ -87,7 +153,7 @@ function ResultsContent() {
               </div>
               <div className="text-center">
                 <div className="text-sm text-gray-600">GCS Total</div>
-                <div className="text-xl font-bold text-blue-900">{results.gcs_total}</div>
+                <div className="text-xl font-bold text-blue-900">{results.gcs_total}/15</div>
               </div>
             </div>
           </div>
@@ -129,15 +195,15 @@ function ResultsContent() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
               href="/ems-ai/triage" 
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition text-center"
+              className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition text-center"
             >
-              New Assessment
+              🚨 New Assessment
             </a>
             <a 
               href="/ems-ai/behind-model" 
               className="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition text-center"
             >
-              Learn About the Model
+              📋 About This Tool
             </a>
           </div>
         </div>
