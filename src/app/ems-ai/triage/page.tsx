@@ -16,7 +16,7 @@ export default function EMSTriageForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
@@ -106,68 +106,145 @@ export default function EMSTriageForm() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       SpO₂ (%)
                     </label>
-                    <input 
-                      type="number" 
+                    <select 
                       name="spo2" 
-                      min="0" 
-                      max="100" 
                       required 
                       value={form.spo2} 
                       onChange={handleChange} 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
-                      placeholder="95"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                    >
+                      <option value="">Select SpO₂</option>
+                      <option value="100">100% - Normal</option>
+                      <option value="99">99% - Normal</option>
+                      <option value="98">98% - Normal</option>
+                      <option value="97">97% - Normal</option>
+                      <option value="96">96% - Normal</option>
+                      <option value="95">95% - Normal</option>
+                      <option value="94">94% - Mild Hypoxemia</option>
+                      <option value="93">93% - Mild Hypoxemia</option>
+                      <option value="92">92% - Mild Hypoxemia</option>
+                      <option value="91">91% - Mild Hypoxemia</option>
+                      <option value="90">90% - Mild Hypoxemia</option>
+                      <option value="89">89% - Moderate Hypoxemia</option>
+                      <option value="88">88% - Moderate Hypoxemia</option>
+                      <option value="87">87% - Moderate Hypoxemia</option>
+                      <option value="86">86% - Moderate Hypoxemia</option>
+                      <option value="85">85% - Moderate Hypoxemia</option>
+                      <option value="84">84% - Severe Hypoxemia</option>
+                      <option value="83">83% - Severe Hypoxemia</option>
+                      <option value="82">82% - Severe Hypoxemia</option>
+                      <option value="81">81% - Severe Hypoxemia</option>
+                      <option value="80">80% - Severe Hypoxemia</option>
+                      <option value="79">79% - Critical</option>
+                      <option value="78">78% - Critical</option>
+                      <option value="77">77% - Critical</option>
+                      <option value="76">76% - Critical</option>
+                      <option value="75">75% - Critical</option>
+                      <option value="70">70% - Critical</option>
+                      <option value="65">65% - Critical</option>
+                      <option value="60">60% - Critical</option>
+                    </select>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Respiratory Rate (breaths/min)
                     </label>
-                    <input 
-                      type="number" 
+                    <select 
                       name="rr" 
-                      min="0" 
-                      max="60" 
                       required 
                       value={form.rr} 
                       onChange={handleChange} 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
-                      placeholder="16"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                    >
+                      <option value="">Select Respiratory Rate</option>
+                      <option value="8">8 - Bradypnea</option>
+                      <option value="10">10 - Bradypnea</option>
+                      <option value="12">12 - Normal</option>
+                      <option value="14">14 - Normal</option>
+                      <option value="16">16 - Normal</option>
+                      <option value="18">18 - Normal</option>
+                      <option value="20">20 - Normal</option>
+                      <option value="22">22 - Tachypnea</option>
+                      <option value="24">24 - Tachypnea</option>
+                      <option value="26">26 - Tachypnea</option>
+                      <option value="28">28 - Tachypnea</option>
+                      <option value="30">30 - Tachypnea</option>
+                      <option value="32">32 - Severe Tachypnea</option>
+                      <option value="35">35 - Severe Tachypnea</option>
+                      <option value="40">40 - Severe Tachypnea</option>
+                    </select>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Heart Rate (bpm)
                     </label>
-                    <input 
-                      type="number" 
+                    <select 
                       name="hr" 
-                      min="0" 
-                      max="250" 
                       required 
                       value={form.hr} 
                       onChange={handleChange} 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
-                      placeholder="80"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                    >
+                      <option value="">Select Heart Rate</option>
+                      <option value="35">35 - Severe Bradycardia</option>
+                      <option value="40">40 - Bradycardia</option>
+                      <option value="45">45 - Bradycardia</option>
+                      <option value="50">50 - Bradycardia</option>
+                      <option value="55">55 - Bradycardia</option>
+                      <option value="60">60 - Normal</option>
+                      <option value="65">65 - Normal</option>
+                      <option value="70">70 - Normal</option>
+                      <option value="75">75 - Normal</option>
+                      <option value="80">80 - Normal</option>
+                      <option value="85">85 - Normal</option>
+                      <option value="90">90 - Normal</option>
+                      <option value="95">95 - Normal</option>
+                      <option value="100">100 - Normal</option>
+                      <option value="110">110 - Tachycardia</option>
+                      <option value="120">120 - Tachycardia</option>
+                      <option value="130">130 - Tachycardia</option>
+                      <option value="140">140 - Tachycardia</option>
+                      <option value="150">150 - Severe Tachycardia</option>
+                      <option value="160">160 - Severe Tachycardia</option>
+                      <option value="180">180 - Severe Tachycardia</option>
+                      <option value="200">200 - Severe Tachycardia</option>
+                    </select>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Systolic Blood Pressure (mmHg)
                     </label>
-                    <input 
-                      type="number" 
+                    <select 
                       name="sbp" 
-                      min="0" 
-                      max="300" 
                       required 
                       value={form.sbp} 
                       onChange={handleChange} 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
-                      placeholder="120"
-                    />
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                    >
+                      <option value="">Select Systolic BP</option>
+                      <option value="60">60 - Critical Hypotension</option>
+                      <option value="70">70 - Critical Hypotension</option>
+                      <option value="80">80 - Hypotension</option>
+                      <option value="85">85 - Hypotension</option>
+                      <option value="90">90 - Low Normal</option>
+                      <option value="95">95 - Low Normal</option>
+                      <option value="100">100 - Normal</option>
+                      <option value="110">110 - Normal</option>
+                      <option value="120">120 - Normal</option>
+                      <option value="130">130 - Normal</option>
+                      <option value="140">140 - Normal</option>
+                      <option value="150">150 - Normal</option>
+                      <option value="160">160 - Hypertension</option>
+                      <option value="170">170 - Hypertension</option>
+                      <option value="180">180 - Hypertension</option>
+                      <option value="190">190 - Hypertension</option>
+                      <option value="200">200 - Severe Hypertension</option>
+                      <option value="220">220 - Severe Hypertension</option>
+                      <option value="240">240 - Severe Hypertension</option>
+                    </select>
                   </div>
                 </div>
               </div>
