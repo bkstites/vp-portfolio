@@ -20,6 +20,8 @@ interface PredictionResult {
   cardiovascular_risk: string;
   overall_risk: string;
   risk_level: 'Low' | 'Moderate' | 'High' | 'Critical';
+  narrative_risk_score: number;
+  narrative_insights: string[];
 }
 
 // Calculate ROX score (SpO2/FiO2 ratio / Respiratory Rate) - validated in emergency medicine
@@ -229,6 +231,168 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
   return { respiratory, neurological, cardiovascular, overall, risk_level };
 }
 
+// Narrative analysis based on emergency medicine literature
+function analyzeNarrative(narrative: string): { riskScore: number; insights: string[] } {
+  const insights: string[] = [];
+  const narrativeLower = narrative.toLowerCase();
+  
+  // Medical keyword categories with risk levels (based on emergency medicine literature)
+  const keywordCategories = {
+    // CRITICAL RISK KEYWORDS (immediate escalation)
+    critical: {
+      respiratory: [
+        'can\'t breathe', 'stopped breathing', 'not breathing', 'respiratory arrest',
+        'chest tightness', 'chest pressure', 'suffocating', 'choking',
+        'blue lips', 'cyanosis', 'unable to speak', 'gasping'
+      ],
+      cardiovascular: [
+        'chest pain', 'heart attack', 'cardiac arrest', 'heart stopped',
+        'crushing chest pain', 'pressure in chest', 'pain radiating to arm',
+        'irregular heartbeat', 'skipped beats', 'heart racing', 'palpitations'
+      ],
+      neurological: [
+        'unconscious', 'passed out', 'fainted', 'seizure', 'convulsion',
+        'stroke symptoms', 'facial droop', 'slurred speech', 'weakness on one side',
+        'confusion', 'disoriented', 'altered mental status'
+      ],
+      trauma: [
+        'major trauma', 'head injury', 'bleeding profusely', 'uncontrolled bleeding',
+        'penetrating injury', 'gunshot', 'stab wound', 'amputation'
+      ]
+    },
+    
+    // HIGH RISK KEYWORDS (significant concern)
+    high: {
+      respiratory: [
+        'shortness of breath', 'difficulty breathing', 'wheezing', 'coughing blood',
+        'rapid breathing', 'shallow breathing', 'chest pain with breathing',
+        'short of breath', 'can\'t breathe', 'trouble breathing'
+      ],
+      cardiovascular: [
+        'dizziness', 'lightheaded', 'feeling faint', 'sweating profusely',
+        'nausea with chest pain', 'arm pain', 'jaw pain', 'back pain',
+        'sweating', 'sweat', 'palpitations', 'heart racing', 'irregular heartbeat'
+      ],
+      neurological: [
+        'severe headache', 'worst headache', 'sudden headache', 'vision changes',
+        'numbness', 'tingling', 'weakness', 'difficulty walking'
+      ],
+      medical_conditions: [
+        'diabetes', 'diabetic', 'high blood pressure', 'heart disease',
+        'copd', 'asthma', 'emphysema', 'lung disease'
+      ]
+    },
+    
+    // MODERATE RISK KEYWORDS (monitoring required)
+    moderate: {
+      respiratory: [
+        'cough', 'sore throat', 'runny nose', 'congestion', 'mild shortness of breath'
+      ],
+      cardiovascular: [
+        'mild chest discomfort', 'heartburn', 'indigestion', 'anxiety',
+        'stress', 'feeling overwhelmed'
+      ],
+      neurological: [
+        'mild headache', 'tired', 'fatigue', 'dizzy spells'
+      ],
+      medications: [
+        'blood thinner', 'warfarin', 'coumadin', 'aspirin', 'plavix',
+        'insulin', 'diabetes medication', 'heart medication'
+      ]
+    }
+  };
+
+  let riskScore = 0;
+  const detectedKeywords = {
+    critical: [] as string[],
+    high: [] as string[],
+    moderate: [] as string[]
+  };
+  
+  // Check each category
+  Object.entries(keywordCategories).forEach(([riskLevel, categories]) => {
+    Object.entries(categories).forEach(([category, keywords]) => {
+      keywords.forEach(keyword => {
+        if (narrativeLower.includes(keyword)) {
+          detectedKeywords[riskLevel as keyof typeof detectedKeywords].push(keyword);
+          
+          // Risk scoring based on keyword severity
+          switch (riskLevel) {
+            case 'critical':
+              riskScore += 10;
+              break;
+            case 'high':
+              riskScore += 5;
+              break;
+            case 'moderate':
+              riskScore += 2;
+              break;
+          }
+        }
+      });
+    });
+  });
+  
+  // Generate insights based on detected keywords
+  if (detectedKeywords.critical.length > 0) {
+    insights.push('🚨 CRITICAL SYMPTOMS DETECTED: Immediate medical attention required');
+    detectedKeywords.critical.forEach(keyword => {
+      insights.push(`🚨 ${keyword.toUpperCase()}: Requires immediate assessment`);
+    });
+  }
+  
+  if (detectedKeywords.high.length > 0) {
+    insights.push('⚠️ HIGH RISK SYMPTOMS: Significant medical concern');
+    detectedKeywords.high.forEach(keyword => {
+      insights.push(`⚠️ ${keyword}: Monitor closely, prepare for escalation`);
+    });
+  }
+  
+  if (detectedKeywords.moderate.length > 0) {
+    insights.push('📋 MODERATE SYMPTOMS: Standard monitoring required');
+    detectedKeywords.moderate.forEach(keyword => {
+      insights.push(`📋 ${keyword}: Document and monitor`);
+    });
+  }
+
+  // Specific medical condition alerts
+  if (narrativeLower.includes('diabetes') || narrativeLower.includes('diabetic')) {
+    insights.push('💉 Diabetes Alert: Check blood glucose, monitor for hypo/hyperglycemia');
+  }
+  
+  if (narrativeLower.includes('heart') || narrativeLower.includes('cardiac')) {
+    insights.push('❤️ Cardiac History: Prepare for cardiac assessment, consider ECG');
+  }
+  
+  if (narrativeLower.includes('copd') || narrativeLower.includes('asthma') || narrativeLower.includes('lung')) {
+    insights.push('🫁 Respiratory Condition: Monitor airway, prepare breathing treatments');
+  }
+  
+  if (narrativeLower.includes('stroke') || narrativeLower.includes('cva')) {
+    insights.push('🧠 Stroke History: Monitor for new symptoms, check FAST signs');
+  }
+
+  // Medication alerts
+  if (narrativeLower.includes('blood thinner') || narrativeLower.includes('warfarin') || narrativeLower.includes('coumadin')) {
+    insights.push('🩸 Blood Thinner Alert: Increased bleeding risk, check for bleeding');
+  }
+  
+  if (narrativeLower.includes('insulin')) {
+    insights.push('💉 Insulin Alert: Check blood glucose, watch for hypoglycemia');
+  }
+
+  // Overall risk assessment integration
+  if (riskScore >= 15) {
+    insights.push('🚨 HIGH NARRATIVE RISK SCORE: Multiple concerning symptoms detected');
+  } else if (riskScore >= 8) {
+    insights.push('⚠️ MODERATE NARRATIVE RISK SCORE: Several symptoms require attention');
+  } else if (riskScore >= 3) {
+    insights.push('📋 LOW NARRATIVE RISK SCORE: Minor symptoms noted');
+  }
+
+  return { riskScore, insights };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -258,6 +422,22 @@ export async function POST(request: NextRequest) {
     // Determine risk levels using validated emergency medicine standards
     const riskAssessment = determineRiskLevels(vitals, rox_score, gcs_total, rpp_score);
 
+    // Analyze narrative if provided
+    const patientNarrative = body.patient_narrative || '';
+    const narrativeAnalysis = analyzeNarrative(patientNarrative);
+
+    // Integrate narrative risk with vital signs risk
+    let finalRiskLevel = riskAssessment.risk_level;
+    if (narrativeAnalysis.riskScore >= 15) {
+      // High narrative risk can escalate overall risk
+      if (finalRiskLevel === 'Low') finalRiskLevel = 'Moderate';
+      else if (finalRiskLevel === 'Moderate') finalRiskLevel = 'High';
+      else if (finalRiskLevel === 'High') finalRiskLevel = 'Critical';
+    } else if (narrativeAnalysis.riskScore >= 8) {
+      // Moderate narrative risk can escalate from Low to Moderate
+      if (finalRiskLevel === 'Low') finalRiskLevel = 'Moderate';
+    }
+
     const result: PredictionResult = {
       rox_score: Math.round(rox_score * 100) / 100, // Round to 2 decimal places
       gcs_total,
@@ -266,7 +446,9 @@ export async function POST(request: NextRequest) {
       neurological_risk: riskAssessment.neurological,
       cardiovascular_risk: riskAssessment.cardiovascular,
       overall_risk: riskAssessment.overall,
-      risk_level: riskAssessment.risk_level,
+      risk_level: finalRiskLevel,
+      narrative_risk_score: narrativeAnalysis.riskScore,
+      narrative_insights: narrativeAnalysis.insights,
     };
 
     return NextResponse.json(result);

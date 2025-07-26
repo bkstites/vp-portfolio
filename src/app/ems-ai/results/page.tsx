@@ -57,72 +57,192 @@ function getClinicalRecommendations(riskLevel: string) {
   return recommendations;
 }
 
+// Enhanced narrative analysis based on emergency medicine literature
 function extractNarrativeInsights(patientNarrative: string, riskLevel: string, respiratoryRisk: string, cardiovascularRisk: string, neurologicalRisk: string) {
   const insights = [];
   const narrative = patientNarrative.toLowerCase();
+  
+  // Medical keyword categories with risk levels (based on emergency medicine literature)
+  const keywordCategories = {
+    // CRITICAL RISK KEYWORDS (immediate escalation)
+    critical: {
+      respiratory: [
+        'can\'t breathe', 'stopped breathing', 'not breathing', 'respiratory arrest',
+        'chest tightness', 'chest pressure', 'suffocating', 'choking',
+        'blue lips', 'cyanosis', 'unable to speak', 'gasping'
+      ],
+      cardiovascular: [
+        'chest pain', 'heart attack', 'cardiac arrest', 'heart stopped',
+        'crushing chest pain', 'pressure in chest', 'pain radiating to arm',
+        'irregular heartbeat', 'skipped beats', 'heart racing', 'palpitations'
+      ],
+      neurological: [
+        'unconscious', 'passed out', 'fainted', 'seizure', 'convulsion',
+        'stroke symptoms', 'facial droop', 'slurred speech', 'weakness on one side',
+        'confusion', 'disoriented', 'altered mental status'
+      ],
+      trauma: [
+        'major trauma', 'head injury', 'bleeding profusely', 'uncontrolled bleeding',
+        'penetrating injury', 'gunshot', 'stab wound', 'amputation'
+      ]
+    },
+    
+    // HIGH RISK KEYWORDS (significant concern)
+    high: {
+      respiratory: [
+        'shortness of breath', 'difficulty breathing', 'wheezing', 'coughing blood',
+        'rapid breathing', 'shallow breathing', 'chest pain with breathing',
+        'short of breath', 'can\'t breathe', 'trouble breathing'
+      ],
+      cardiovascular: [
+        'dizziness', 'lightheaded', 'feeling faint', 'sweating profusely',
+        'nausea with chest pain', 'arm pain', 'jaw pain', 'back pain',
+        'sweating', 'sweat', 'palpitations', 'heart racing', 'irregular heartbeat'
+      ],
+      neurological: [
+        'severe headache', 'worst headache', 'sudden headache', 'vision changes',
+        'numbness', 'tingling', 'weakness', 'difficulty walking'
+      ],
+      medical_conditions: [
+        'diabetes', 'diabetic', 'high blood pressure', 'heart disease',
+        'copd', 'asthma', 'emphysema', 'lung disease'
+      ]
+    },
+    
+    // MODERATE RISK KEYWORDS (monitoring required)
+    moderate: {
+      respiratory: [
+        'cough', 'sore throat', 'runny nose', 'congestion', 'mild shortness of breath'
+      ],
+      cardiovascular: [
+        'mild chest discomfort', 'heartburn', 'indigestion', 'anxiety',
+        'stress', 'feeling overwhelmed'
+      ],
+      neurological: [
+        'mild headache', 'tired', 'fatigue', 'dizzy spells'
+      ],
+      medications: [
+        'blood thinner', 'warfarin', 'coumadin', 'aspirin', 'plavix',
+        'insulin', 'diabetes medication', 'heart medication'
+      ]
+    }
+  };
 
-  // Symptom analysis
-  if (narrative.includes('chest pain') || narrative.includes('chest discomfort')) {
-    insights.push('🚨 **Chest pain**: Monitor for cardiac issues, consider ECG');
-  }
-  if (narrative.includes('shortness of breath') || narrative.includes('difficulty breathing') || narrative.includes('can\'t breathe')) {
-    insights.push('🫁 **Breathing problems**: Monitor airway and oxygen levels closely');
-  }
-  if (narrative.includes('dizzy') || narrative.includes('dizziness') || narrative.includes('lightheaded')) {
-    insights.push('💫 **Dizziness**: Check blood pressure, monitor for fainting');
-  }
-  if (narrative.includes('confused') || narrative.includes('confusion') || narrative.includes('disoriented')) {
-    insights.push('🧠 **Confusion**: Monitor mental status, check blood sugar');
-  }
-  if (narrative.includes('fall') || narrative.includes('fell') || narrative.includes('trauma')) {
-    insights.push('🦴 **Fall/trauma**: Check for injuries, monitor for internal bleeding');
-  }
-  if (narrative.includes('pain') && !narrative.includes('chest pain')) {
-    insights.push('😣 **Pain complaint**: Assess location and severity, monitor vital signs');
+  // Function to detect keywords and calculate risk score
+  function detectKeywords(narrative: string) {
+    const detectedKeywords = {
+      critical: [] as string[],
+      high: [] as string[],
+      moderate: [] as string[]
+    };
+    
+    let riskScore = 0;
+    
+    // Check each category
+    Object.entries(keywordCategories).forEach(([riskLevel, categories]) => {
+      Object.entries(categories).forEach(([category, keywords]) => {
+        keywords.forEach(keyword => {
+          if (narrative.includes(keyword)) {
+            detectedKeywords[riskLevel as keyof typeof detectedKeywords].push(keyword);
+            
+            // Risk scoring based on keyword severity
+            switch (riskLevel) {
+              case 'critical':
+                riskScore += 10;
+                break;
+              case 'high':
+                riskScore += 5;
+                break;
+              case 'moderate':
+                riskScore += 2;
+                break;
+            }
+          }
+        });
+      });
+    });
+    
+    return { detectedKeywords, riskScore };
   }
 
-  // Medical conditions mentioned
+  // Analyze narrative for keywords
+  const { detectedKeywords, riskScore } = detectKeywords(narrative);
+  
+  // Generate insights based on detected keywords
+  if (detectedKeywords.critical.length > 0) {
+    insights.push('🚨 **CRITICAL SYMPTOMS DETECTED**: Immediate medical attention required');
+    detectedKeywords.critical.forEach(keyword => {
+      insights.push(`🚨 **${keyword.toUpperCase()}**: Requires immediate assessment`);
+    });
+  }
+  
+  if (detectedKeywords.high.length > 0) {
+    insights.push('⚠️ **HIGH RISK SYMPTOMS**: Significant medical concern');
+    detectedKeywords.high.forEach(keyword => {
+      insights.push(`⚠️ **${keyword}**: Monitor closely, prepare for escalation`);
+    });
+  }
+  
+  if (detectedKeywords.moderate.length > 0) {
+    insights.push('📋 **MODERATE SYMPTOMS**: Standard monitoring required');
+    detectedKeywords.moderate.forEach(keyword => {
+      insights.push(`📋 **${keyword}**: Document and monitor`);
+    });
+  }
+
+  // Specific medical condition alerts
   if (narrative.includes('diabetes') || narrative.includes('diabetic')) {
-    insights.push('💉 **Diabetes**: Check blood sugar, watch for high/low levels');
+    insights.push('💉 **Diabetes Alert**: Check blood glucose, monitor for hypo/hyperglycemia');
   }
+  
   if (narrative.includes('heart') || narrative.includes('cardiac')) {
-    insights.push('❤️ **Heart condition**: Monitor closely, prepare for cardiac issues');
+    insights.push('❤️ **Cardiac History**: Prepare for cardiac assessment, consider ECG');
   }
+  
   if (narrative.includes('copd') || narrative.includes('asthma') || narrative.includes('lung')) {
-    insights.push('🫁 **Lung condition**: Monitor breathing, consider breathing treatments');
+    insights.push('🫁 **Respiratory Condition**: Monitor airway, prepare breathing treatments');
   }
+  
   if (narrative.includes('stroke') || narrative.includes('cva')) {
-    insights.push('🧠 **Stroke history**: Monitor for new symptoms, check FAST signs');
+    insights.push('🧠 **Stroke History**: Monitor for new symptoms, check FAST signs');
   }
 
-  // Medications mentioned
+  // Medication alerts
   if (narrative.includes('blood thinner') || narrative.includes('warfarin') || narrative.includes('coumadin')) {
-    insights.push('🩸 **Blood thinner**: Increased bleeding risk, check for bleeding');
+    insights.push('🩸 **Blood Thinner Alert**: Increased bleeding risk, check for bleeding');
   }
+  
   if (narrative.includes('insulin')) {
-    insights.push('💉 **Insulin**: Check blood sugar, watch for low blood sugar');
-  }
-  if (narrative.includes('medication') || narrative.includes('medicine') || narrative.includes('pill')) {
-    insights.push('💊 **Medications**: Document what they\'re taking, check for interactions');
+    insights.push('💉 **Insulin Alert**: Check blood glucose, watch for hypoglycemia');
   }
 
-  // Risk-specific insights
+  // Risk-specific insights based on vital signs
   if (respiratoryRisk === 'Critical' || respiratoryRisk === 'High') {
-    insights.push('🫁 **Breathing problems detected**: Prepare for airway management');
+    insights.push('🫁 **Respiratory Distress Detected**: Prepare for airway management');
   }
+  
   if (cardiovascularRisk === 'Critical' || cardiovascularRisk === 'High') {
-    insights.push('❤️ **Heart/circulation problems**: Monitor ECG, prepare for cardiac care');
+    insights.push('❤️ **Cardiovascular Stress Detected**: Monitor ECG, prepare for cardiac care');
   }
+  
   if (neurologicalRisk === 'Critical' || neurologicalRisk === 'High') {
-    insights.push('🧠 **Brain/nerve problems**: Monitor consciousness, check for stroke signs');
+    insights.push('🧠 **Neurological Concerns**: Monitor consciousness, check for stroke signs');
+  }
+
+  // Overall risk assessment integration
+  if (riskScore >= 15) {
+    insights.push('🚨 **HIGH NARRATIVE RISK SCORE**: Multiple concerning symptoms detected');
+  } else if (riskScore >= 8) {
+    insights.push('⚠️ **MODERATE NARRATIVE RISK SCORE**: Several symptoms require attention');
+  } else if (riskScore >= 3) {
+    insights.push('📋 **LOW NARRATIVE RISK SCORE**: Minor symptoms noted');
   }
 
   // General safety reminders
   if (riskLevel === 'Critical') {
-    insights.push('🚨 **High risk patient**: Stay alert for rapid changes, prepare for emergency');
-  }
-  if (riskLevel === 'High') {
-    insights.push('⚠️ **Moderate risk**: Monitor closely, be ready to escalate care');
+    insights.push('🚨 **CRITICAL PATIENT**: Stay alert for rapid deterioration, prepare for emergency');
+  } else if (riskLevel === 'High') {
+    insights.push('⚠️ **HIGH RISK PATIENT**: Monitor closely, be ready to escalate care');
   }
 
   return insights;
@@ -151,15 +271,35 @@ function ResultsContent() {
   const roxScore = searchParams.get('rox_score') || '0';
   const gcsTotal = searchParams.get('gcs_total') || '0';
   const rppScore = searchParams.get('rpp_score') || '0';
+  const narrativeRiskScore = searchParams.get('narrative_risk_score') || '0';
 
   const recommendations = getClinicalRecommendations(riskLevel);
-  const narrativeInsights = extractNarrativeInsights(
-    patientNarrative,
-    riskLevel,
-    respiratoryRisk,
-    cardiovascularRisk,
-    neurologicalRisk
-  );
+  
+  // Get narrative insights from API if available, otherwise use local analysis
+  const apiNarrativeInsights = searchParams.get('narrative_insights');
+  let narrativeInsights: string[];
+  
+  if (apiNarrativeInsights) {
+    try {
+      narrativeInsights = JSON.parse(decodeURIComponent(apiNarrativeInsights));
+    } catch {
+      narrativeInsights = extractNarrativeInsights(
+        patientNarrative,
+        riskLevel,
+        respiratoryRisk,
+        cardiovascularRisk,
+        neurologicalRisk
+      );
+    }
+  } else {
+    narrativeInsights = extractNarrativeInsights(
+      patientNarrative,
+      riskLevel,
+      respiratoryRisk,
+      cardiovascularRisk,
+      neurologicalRisk
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -280,43 +420,62 @@ function ResultsContent() {
         {/* Clinical Scores */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Clinical Assessment Scores</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* ROX Score */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-gray-700">ROX Score</h4>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(respiratoryRisk)}`}>
-                  {respiratoryRisk}
-                </span>
-              </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{roxScore}</div>
-              <p className="text-xs text-gray-500">SpO₂/FiO₂ ratio ÷ Respiratory Rate</p>
-            </div>
-            
-            {/* GCS Score */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-gray-700">GCS Total</h4>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(neurologicalRisk)}`}>
-                  {neurologicalRisk}
-                </span>
-              </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{gcsTotal}/15</div>
-              <p className="text-xs text-gray-500">Eye + Verbal + Motor Response</p>
-            </div>
-            
-            {/* RPP Score */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-gray-700">RPP Score</h4>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(cardiovascularRisk)}`}>
-                  {cardiovascularRisk}
-                </span>
-              </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{rppScore?.toLocaleString()}</div>
-              <p className="text-xs text-gray-500">Heart Rate × Systolic BP</p>
-            </div>
-          </div>
+                                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                          {/* ROX Score */}
+                          <div className="border border-gray-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="text-sm font-medium text-gray-700">ROX Score</h4>
+                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(respiratoryRisk)}`}>
+                                {respiratoryRisk}
+                              </span>
+                            </div>
+                            <div className="text-2xl font-bold text-gray-900 mb-1">{roxScore}</div>
+                            <p className="text-xs text-gray-500">SpO₂/FiO₂ ratio ÷ Respiratory Rate</p>
+                          </div>
+                          
+                          {/* GCS Score */}
+                          <div className="border border-gray-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="text-sm font-medium text-gray-700">GCS Total</h4>
+                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(neurologicalRisk)}`}>
+                                {neurologicalRisk}
+                              </span>
+                            </div>
+                            <div className="text-2xl font-bold text-gray-900 mb-1">{gcsTotal}/15</div>
+                            <p className="text-xs text-gray-500">Eye + Verbal + Motor Response</p>
+                          </div>
+                          
+                          {/* RPP Score */}
+                          <div className="border border-gray-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="text-sm font-medium text-gray-700">RPP Score</h4>
+                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(cardiovascularRisk)}`}>
+                                {cardiovascularRisk}
+                              </span>
+                            </div>
+                            <div className="text-2xl font-bold text-gray-900 mb-1">{rppScore?.toLocaleString()}</div>
+                            <p className="text-xs text-gray-500">Heart Rate × Systolic BP</p>
+                          </div>
+                          
+                          {/* Narrative Risk Score */}
+                          <div className="border border-gray-200 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="text-sm font-medium text-gray-700">Narrative Risk</h4>
+                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
+                                parseInt(narrativeRiskScore) >= 15 ? 'bg-red-100 text-red-800 border-red-200' :
+                                parseInt(narrativeRiskScore) >= 8 ? 'bg-orange-100 text-orange-800 border-orange-200' :
+                                parseInt(narrativeRiskScore) >= 3 ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                'bg-green-100 text-green-800 border-green-200'
+                              }`}>
+                                {parseInt(narrativeRiskScore) >= 15 ? 'High' :
+                                 parseInt(narrativeRiskScore) >= 8 ? 'Moderate' :
+                                 parseInt(narrativeRiskScore) >= 3 ? 'Low' : 'None'}
+                              </span>
+                            </div>
+                            <div className="text-2xl font-bold text-gray-900 mb-1">{narrativeRiskScore}</div>
+                            <p className="text-xs text-gray-500">Keyword-based risk score</p>
+                          </div>
+                        </div>
         </div>
 
         {/* Clinical Recommendations */}

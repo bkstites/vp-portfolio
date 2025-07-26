@@ -36,10 +36,46 @@ export default function TriagePage() {
     setForm({ ...form, [component]: value });
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const params = new URLSearchParams(form as unknown as Record<string, string>);
-    router.push(`/ems-ai/results?${params.toString()}`);
+    
+    try {
+      // Call the API to get prediction with narrative analysis
+      const response = await fetch('/api/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get prediction');
+      }
+
+      const prediction = await response.json();
+      
+      // Pass all form data and prediction results as URL parameters
+      const params = new URLSearchParams({
+        ...form,
+        ...prediction,
+        risk_level: prediction.risk_level,
+        respiratory_risk: prediction.respiratory_risk,
+        cardiovascular_risk: prediction.cardiovascular_risk,
+        neurological_risk: prediction.neurological_risk,
+        rox_score: prediction.rox_score.toString(),
+        gcs_total: prediction.gcs_total.toString(),
+        rpp_score: prediction.rpp_score.toString(),
+        narrative_risk_score: prediction.narrative_risk_score.toString(),
+      });
+      
+      router.push(`/ems-ai/results?${params.toString()}`);
+    } catch (error) {
+      console.error('Error getting prediction:', error);
+      // Fallback to URL parameters only
+      const params = new URLSearchParams(form as unknown as Record<string, string>);
+      router.push(`/ems-ai/results?${params.toString()}`);
+    }
   }
 
   return (
