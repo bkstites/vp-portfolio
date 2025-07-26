@@ -165,7 +165,7 @@ function determineRiskLevels(vitals, rox, gcs, rpp) {
 
   // Cardiovascular risk
   let cardiovascular = 'Low';
-  if (vitals.hr < 50 || vitals.hr > 120) {
+  if (vitals.hr < 50 || vitals.hr >= 120) {
     if (vitals.hr < 40 || vitals.hr > 150) cardiovascular = 'Critical';
     else cardiovascular = 'High';
   } else if (vitals.hr < 60 || vitals.hr > 100) {
@@ -175,14 +175,14 @@ function determineRiskLevels(vitals, rox, gcs, rpp) {
   if (vitals.sbp < 90) {
     if (vitals.sbp < 80) cardiovascular = 'Critical';
     else if (cardiovascular === 'Low') cardiovascular = 'High';
-  } else if (vitals.sbp > 180) {
+  } else if (vitals.sbp >= 140) {
     if (cardiovascular === 'Low') cardiovascular = 'Moderate';
   }
   
   // Adjusted RPP thresholds
   if (rpp > 20000) { // Increased threshold for critical
     if (cardiovascular === 'Low') cardiovascular = 'Critical';
-  } else if (rpp > 15000) { // Adjusted threshold for high
+  } else if (rpp >= 15000) { // Adjusted threshold for high
     if (cardiovascular === 'Low') cardiovascular = 'High';
   } else if (rpp < 4000) {
     if (cardiovascular === 'Low') cardiovascular = 'Moderate';
