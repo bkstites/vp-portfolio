@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit() {
     // Let the browser submit the form to Formsubmit, then show thank you message
     setTimeout(() => setSubmitted(true), 1000); // fallback in case redirect fails
   }

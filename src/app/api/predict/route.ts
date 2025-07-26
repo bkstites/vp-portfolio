@@ -199,7 +199,6 @@ function determineRiskLevels(vitals: VitalSigns, rox: number, gcs: number, rpp: 
   // Nuanced critical system escalation - not every critical system should escalate overall
   const risks = [respiratory, neurological, cardiovascular];
   const criticalCount = risks.filter(r => r === 'Critical').length;
-  const highCount = risks.filter(r => r === 'High').length;
   
   // Only escalate to Critical if multiple systems are critical OR one critical with high scores
   if (criticalCount >= 2) {
@@ -255,8 +254,6 @@ export async function POST(request: NextRequest) {
     const rox_score = calculateROX(vitals.spo2, vitals.rr);
     const gcs_total = calculateGCSTotal(vitals.gcs_eye, vitals.gcs_verbal, vitals.gcs_motor);
     const rpp_score = calculateRPP(vitals.hr, vitals.sbp);
-    const news2_score = calculateNEWS2Score(vitals);
-    const meows_score = calculateMEOWSScore(vitals);
 
     // Determine risk levels using validated emergency medicine standards
     const riskAssessment = determineRiskLevels(vitals, rox_score, gcs_total, rpp_score);

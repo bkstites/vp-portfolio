@@ -86,7 +86,7 @@ export default function TriagePage() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">Patient Narrative</h3>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tell us what's going on
+                  Tell us what&apos;s going on
                 </label>
                 <textarea
                   name="patient_narrative"
