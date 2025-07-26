@@ -11,13 +11,8 @@ interface FormData {
   gcs_eye: string;
   gcs_verbal: string;
   gcs_motor: string;
-  // Patient History Fields
-  chief_complaint: string;
-  medical_history: string;
-  medications: string;
-  allergies: string;
-  last_oral_intake: string;
-  events_leading_to_incident: string;
+  // Simplified patient narrative
+  patient_narrative: string;
 }
 
 export default function TriagePage() {
@@ -30,12 +25,7 @@ export default function TriagePage() {
     gcs_eye: '',
     gcs_verbal: '',
     gcs_motor: '',
-    chief_complaint: '',
-    medical_history: '',
-    medications: '',
-    allergies: '',
-    last_oral_intake: '',
-    events_leading_to_incident: '',
+    patient_narrative: '',
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -60,107 +50,31 @@ export default function TriagePage() {
           <div className="text-center">
             <h1 className="text-3xl font-semibold text-gray-900 mb-2">Patient Assessment</h1>
             <p className="text-gray-600">
-              Enter patient vital signs, Glasgow Coma Scale scores, and relevant history for risk assessment.
+              Enter patient vital signs, Glasgow Coma Scale scores, and what happened.
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Patient History Section */}
+          {/* Patient Narrative Section */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Patient History & Narrative</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">What's Happening?</h2>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Chief Complaint */}
-              <div className="lg:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Chief Complaint *
-                </label>
-                <textarea
-                  name="chief_complaint"
-                  required
-                  value={form.chief_complaint}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-                  placeholder="Primary reason for EMS call (e.g., chest pain, difficulty breathing, fall, etc.)"
-                />
-              </div>
-
-              {/* Events Leading to Incident */}
-              <div className="lg:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Events Leading to Incident
-                </label>
-                <textarea
-                  name="events_leading_to_incident"
-                  value={form.events_leading_to_incident}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-                  placeholder="What happened before EMS arrival? Any trauma, illness, or sudden onset?"
-                />
-              </div>
-
-              {/* Medical History */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Medical History
-                </label>
-                <textarea
-                  name="medical_history"
-                  value={form.medical_history}
-                  onChange={handleChange}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-                  placeholder="Relevant medical conditions (heart disease, diabetes, COPD, etc.)"
-                />
-              </div>
-
-              {/* Medications */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Current Medications
-                </label>
-                <textarea
-                  name="medications"
-                  value={form.medications}
-                  onChange={handleChange}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-                  placeholder="Current medications, dosages, and when last taken"
-                />
-              </div>
-
-              {/* Allergies */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Allergies
-                </label>
-                <textarea
-                  name="allergies"
-                  value={form.allergies}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-                  placeholder="Drug allergies, environmental allergies, severity of reactions"
-                />
-              </div>
-
-              {/* Last Oral Intake */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Oral Intake
-                </label>
-                <textarea
-                  name="last_oral_intake"
-                  value={form.last_oral_intake}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-                  placeholder="When last ate/drank, what consumed, any nausea/vomiting"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tell us what's going on
+              </label>
+              <textarea
+                name="patient_narrative"
+                value={form.patient_narrative}
+                onChange={handleChange}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                placeholder="What happened? What are the symptoms? Any medical conditions or medications we should know about?"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Include symptoms, what happened, medical conditions, medications, or anything else that might be important.
+              </p>
             </div>
           </div>
 

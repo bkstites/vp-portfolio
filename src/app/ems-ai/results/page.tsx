@@ -19,7 +19,7 @@ function getRiskBadgeColor(risk: string) {
   }
 }
 
-function getClinicalRecommendations(riskLevel: string, chiefComplaint: string, medicalHistory: string) {
+function getClinicalRecommendations(riskLevel: string) {
   const recommendations = {
     transport_destination: '',
     monitoring_level: '',
@@ -57,62 +57,72 @@ function getClinicalRecommendations(riskLevel: string, chiefComplaint: string, m
   return recommendations;
 }
 
-function generateNarrativeInsights(
-  riskLevel: string,
-  respiratoryRisk: string,
-  cardiovascularRisk: string,
-  neurologicalRisk: string,
-  chiefComplaint: string,
-  medicalHistory: string,
-  medications: string,
-  allergies: string
-) {
+function extractNarrativeInsights(patientNarrative: string, riskLevel: string, respiratoryRisk: string, cardiovascularRisk: string, neurologicalRisk: string) {
   const insights = [];
+  const narrative = patientNarrative.toLowerCase();
 
-  // Chief complaint analysis
-  if (chiefComplaint.toLowerCase().includes('chest pain')) {
-    insights.push('🚨 **Cardiac concern**: Chest pain with elevated risk requires immediate cardiac evaluation');
+  // Symptom analysis
+  if (narrative.includes('chest pain') || narrative.includes('chest discomfort')) {
+    insights.push('🚨 **Chest pain**: Monitor for cardiac issues, consider ECG');
   }
-  if (chiefComplaint.toLowerCase().includes('breathing') || chiefComplaint.toLowerCase().includes('dyspnea')) {
-    insights.push('🫁 **Respiratory distress**: Monitor airway and oxygenation closely');
+  if (narrative.includes('shortness of breath') || narrative.includes('difficulty breathing') || narrative.includes('can\'t breathe')) {
+    insights.push('🫁 **Breathing problems**: Monitor airway and oxygen levels closely');
   }
-  if (chiefComplaint.toLowerCase().includes('fall') || chiefComplaint.toLowerCase().includes('trauma')) {
-    insights.push('🦴 **Trauma mechanism**: Assess for associated injuries and neurological changes');
+  if (narrative.includes('dizzy') || narrative.includes('dizziness') || narrative.includes('lightheaded')) {
+    insights.push('💫 **Dizziness**: Check blood pressure, monitor for fainting');
   }
-
-  // Medical history insights
-  if (medicalHistory.toLowerCase().includes('diabetes')) {
-    insights.push('💉 **Diabetic patient**: Check blood glucose, monitor for DKA or hypoglycemia');
+  if (narrative.includes('confused') || narrative.includes('confusion') || narrative.includes('disoriented')) {
+    insights.push('🧠 **Confusion**: Monitor mental status, check blood sugar');
   }
-  if (medicalHistory.toLowerCase().includes('heart') || medicalHistory.toLowerCase().includes('cardiac')) {
-    insights.push('❤️ **Cardiac history**: Increased risk for cardiac events, monitor ECG');
+  if (narrative.includes('fall') || narrative.includes('fell') || narrative.includes('trauma')) {
+    insights.push('🦴 **Fall/trauma**: Check for injuries, monitor for internal bleeding');
   }
-  if (medicalHistory.toLowerCase().includes('copd') || medicalHistory.toLowerCase().includes('asthma')) {
-    insights.push('🫁 **Respiratory history**: Monitor for exacerbation, consider bronchodilators');
-  }
-
-  // Medication insights
-  if (medications.toLowerCase().includes('blood thinner') || medications.toLowerCase().includes('warfarin') || medications.toLowerCase().includes('coumadin')) {
-    insights.push('🩸 **Anticoagulation**: Increased bleeding risk, monitor for hemorrhage');
-  }
-  if (medications.toLowerCase().includes('insulin')) {
-    insights.push('💉 **Insulin dependent**: Check blood glucose, monitor for hypo/hyperglycemia');
+  if (narrative.includes('pain') && !narrative.includes('chest pain')) {
+    insights.push('😣 **Pain complaint**: Assess location and severity, monitor vital signs');
   }
 
-  // Allergy insights
-  if (allergies && allergies.trim()) {
-    insights.push('⚠️ **Allergies present**: Document and communicate to receiving facility');
+  // Medical conditions mentioned
+  if (narrative.includes('diabetes') || narrative.includes('diabetic')) {
+    insights.push('💉 **Diabetes**: Check blood sugar, watch for high/low levels');
+  }
+  if (narrative.includes('heart') || narrative.includes('cardiac')) {
+    insights.push('❤️ **Heart condition**: Monitor closely, prepare for cardiac issues');
+  }
+  if (narrative.includes('copd') || narrative.includes('asthma') || narrative.includes('lung')) {
+    insights.push('🫁 **Lung condition**: Monitor breathing, consider breathing treatments');
+  }
+  if (narrative.includes('stroke') || narrative.includes('cva')) {
+    insights.push('🧠 **Stroke history**: Monitor for new symptoms, check FAST signs');
+  }
+
+  // Medications mentioned
+  if (narrative.includes('blood thinner') || narrative.includes('warfarin') || narrative.includes('coumadin')) {
+    insights.push('🩸 **Blood thinner**: Increased bleeding risk, check for bleeding');
+  }
+  if (narrative.includes('insulin')) {
+    insights.push('💉 **Insulin**: Check blood sugar, watch for low blood sugar');
+  }
+  if (narrative.includes('medication') || narrative.includes('medicine') || narrative.includes('pill')) {
+    insights.push('💊 **Medications**: Document what they\'re taking, check for interactions');
   }
 
   // Risk-specific insights
   if (respiratoryRisk === 'Critical' || respiratoryRisk === 'High') {
-    insights.push('🫁 **Respiratory compromise**: Prepare for airway management, consider advanced airway');
+    insights.push('🫁 **Breathing problems detected**: Prepare for airway management');
   }
   if (cardiovascularRisk === 'Critical' || cardiovascularRisk === 'High') {
-    insights.push('❤️ **Cardiovascular instability**: Monitor ECG, prepare for cardiac interventions');
+    insights.push('❤️ **Heart/circulation problems**: Monitor ECG, prepare for cardiac care');
   }
   if (neurologicalRisk === 'Critical' || neurologicalRisk === 'High') {
-    insights.push('🧠 **Neurological concern**: Monitor GCS trends, prepare for neurological deterioration');
+    insights.push('🧠 **Brain/nerve problems**: Monitor consciousness, check for stroke signs');
+  }
+
+  // General safety reminders
+  if (riskLevel === 'Critical') {
+    insights.push('🚨 **High risk patient**: Stay alert for rapid changes, prepare for emergency');
+  }
+  if (riskLevel === 'High') {
+    insights.push('⚠️ **Moderate risk**: Monitor closely, be ready to escalate care');
   }
 
   return insights;
@@ -131,14 +141,7 @@ function ResultsContent() {
     gcs_motor: searchParams.get('gcs_motor') || '',
   };
 
-  const patientHistory = {
-    chief_complaint: searchParams.get('chief_complaint') || '',
-    medical_history: searchParams.get('medical_history') || '',
-    medications: searchParams.get('medications') || '',
-    allergies: searchParams.get('allergies') || '',
-    last_oral_intake: searchParams.get('last_oral_intake') || '',
-    events_leading_to_incident: searchParams.get('events_leading_to_incident') || '',
-  };
+  const patientNarrative = searchParams.get('patient_narrative') || '';
 
   const riskLevel = searchParams.get('risk_level') || 'Low';
   const respiratoryRisk = searchParams.get('respiratory_risk') || 'Low';
@@ -149,16 +152,13 @@ function ResultsContent() {
   const gcsTotal = searchParams.get('gcs_total') || '0';
   const rppScore = searchParams.get('rpp_score') || '0';
 
-  const recommendations = getClinicalRecommendations(riskLevel, patientHistory.chief_complaint, patientHistory.medical_history);
-  const narrativeInsights = generateNarrativeInsights(
+  const recommendations = getClinicalRecommendations(riskLevel);
+  const narrativeInsights = extractNarrativeInsights(
+    patientNarrative,
     riskLevel,
     respiratoryRisk,
     cardiovascularRisk,
-    neurologicalRisk,
-    patientHistory.chief_complaint,
-    patientHistory.medical_history,
-    patientHistory.medications,
-    patientHistory.allergies
+    neurologicalRisk
   );
 
   return (
@@ -319,60 +319,22 @@ function ResultsContent() {
             </div>
           </div>
 
-          {/* Patient History & Narrative Insights */}
+          {/* Patient Narrative & Insights */}
           <div className="space-y-8">
-            {/* Patient History */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Patient History</h2>
-              
-              <div className="space-y-4">
-                {patientHistory.chief_complaint && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Chief Complaint</h3>
-                    <p className="text-gray-900 text-sm">{patientHistory.chief_complaint}</p>
-                  </div>
-                )}
+            {/* Patient Narrative */}
+            {patientNarrative && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">What Happened</h2>
                 
-                {patientHistory.events_leading_to_incident && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Events Leading to Incident</h3>
-                    <p className="text-gray-900 text-sm">{patientHistory.events_leading_to_incident}</p>
-                  </div>
-                )}
-                
-                {patientHistory.medical_history && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Medical History</h3>
-                    <p className="text-gray-900 text-sm">{patientHistory.medical_history}</p>
-                  </div>
-                )}
-                
-                {patientHistory.medications && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Current Medications</h3>
-                    <p className="text-gray-900 text-sm">{patientHistory.medications}</p>
-                  </div>
-                )}
-                
-                {patientHistory.allergies && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Allergies</h3>
-                    <p className="text-gray-900 text-sm">{patientHistory.allergies}</p>
-                  </div>
-                )}
-                
-                {patientHistory.last_oral_intake && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-1">Last Oral Intake</h3>
-                    <p className="text-gray-900 text-sm">{patientHistory.last_oral_intake}</p>
-                  </div>
-                )}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-gray-900 text-sm leading-relaxed">{patientNarrative}</p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Narrative Insights */}
             <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
-              <h2 className="text-xl font-semibold text-blue-900 mb-4">Clinical Insights & Focus Areas</h2>
+              <h2 className="text-xl font-semibold text-blue-900 mb-4">Key Things to Watch</h2>
               
               {narrativeInsights.length > 0 ? (
                 <div className="space-y-3">
@@ -390,7 +352,7 @@ function ResultsContent() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-blue-700">No specific clinical insights identified. Continue standard monitoring.</p>
+                <p className="text-sm text-blue-700">Continue standard monitoring. No specific concerns identified from the narrative.</p>
               )}
             </div>
 
