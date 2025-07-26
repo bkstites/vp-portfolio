@@ -165,56 +165,67 @@ function ResultsContent() {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-semibold text-gray-900 mb-2">Risk Assessment Results</h1>
-            <p className="text-gray-600">Clinical decision support based on patient assessment</p>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900">Risk Assessment Results</h1>
+              <p className="text-gray-600 text-sm">Emergency Medical Services - Clinical Assessment</p>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-gray-500">Assessment ID</div>
+              <div className="text-sm font-mono text-gray-700">EMS-{Date.now().toString().slice(-6)}</div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Results */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Overall Risk Assessment */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Overall Risk Assessment</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Overall Risk Assessment */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900">Risk Stratification</h2>
+            </div>
+            <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div>
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getRiskBadgeColor(riskLevel)}`}>
-                    {riskLevel} Risk
-                  </span>
-                </div>
-                <div className="text-sm text-gray-500">
-                  Assessment ID: EMS-{Date.now().toString().slice(-6)}
-                </div>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getRiskBadgeColor(riskLevel)}`}>
+                  {riskLevel} Risk
+                </span>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-50 rounded p-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700">Response Priority</div>
                   <div className="text-lg font-semibold text-gray-900">
                     {riskLevel === 'Critical' ? 'Immediate' : riskLevel === 'High' ? 'High' : riskLevel === 'Moderate' ? 'Moderate' : 'Routine'}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded p-3">
+                <div className="bg-gray-50 rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700">Required Resources</div>
-                  <div className="text-lg font-semibold text-gray-900">
+                  <div className="text-sm font-semibold text-gray-900">
                     {riskLevel === 'Critical' ? 'ALS Required' : riskLevel === 'High' ? 'ALS Consideration' : 'BLS'}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded p-3">
+                <div className="bg-gray-50 rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700">Transport Destination</div>
-                  <div className="text-lg font-semibold text-gray-900">
+                  <div className="text-sm font-semibold text-gray-900">
                     {recommendations.transport_destination}
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm font-medium text-gray-700">Monitoring Level</div>
+                  <div className="text-sm font-semibold text-gray-900">
+                    {recommendations.monitoring_level}
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Clinical Data */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Clinical Data</h2>
-              
+          {/* Clinical Data */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900">Clinical Data</h2>
+            </div>
+            <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Vital Signs */}
                 <div>
@@ -263,79 +274,92 @@ function ResultsContent() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Clinical Assessment Scores */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Clinical Assessment Scores</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-blue-900 mb-2">ROX Score</h3>
-                  <div className="text-2xl font-bold text-blue-900 mb-1">{roxScore}</div>
-                  <div className="text-xs text-blue-700">SpO₂/FiO₂ ratio ÷ RR</div>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${getRiskBadgeColor(respiratoryRisk)}`}>
-                    {respiratoryRisk}
-                  </span>
-                </div>
-                
-                <div className="bg-green-50 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-green-900 mb-2">GCS Total</h3>
-                  <div className="text-2xl font-bold text-green-900 mb-1">{gcsTotal}/15</div>
-                  <div className="text-xs text-green-700">Eye + Verbal + Motor</div>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${getRiskBadgeColor(neurologicalRisk)}`}>
-                    {neurologicalRisk}
-                  </span>
-                </div>
-                
-                <div className="bg-purple-50 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-purple-900 mb-2">RPP Score</h3>
-                  <div className="text-2xl font-bold text-purple-900 mb-1">{rppScore}</div>
-                  <div className="text-xs text-purple-700">HR × Systolic BP</div>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${getRiskBadgeColor(cardiovascularRisk)}`}>
-                    {cardiovascularRisk}
-                  </span>
-                </div>
+        {/* Clinical Scores */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Clinical Assessment Scores</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* ROX Score */}
+            <div className="border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-700">ROX Score</h4>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(respiratoryRisk)}`}>
+                  {respiratoryRisk}
+                </span>
               </div>
+              <div className="text-2xl font-bold text-gray-900 mb-1">{roxScore}</div>
+              <p className="text-xs text-gray-500">SpO₂/FiO₂ ratio ÷ Respiratory Rate</p>
             </div>
+            
+            {/* GCS Score */}
+            <div className="border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-700">GCS Total</h4>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(neurologicalRisk)}`}>
+                  {neurologicalRisk}
+                </span>
+              </div>
+              <div className="text-2xl font-bold text-gray-900 mb-1">{gcsTotal}/15</div>
+              <p className="text-xs text-gray-500">Eye + Verbal + Motor Response</p>
+            </div>
+            
+            {/* RPP Score */}
+            <div className="border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-700">RPP Score</h4>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskBadgeColor(cardiovascularRisk)}`}>
+                  {cardiovascularRisk}
+                </span>
+              </div>
+              <div className="text-2xl font-bold text-gray-900 mb-1">{rppScore?.toLocaleString()}</div>
+              <p className="text-xs text-gray-500">Heart Rate × Systolic BP</p>
+            </div>
+          </div>
+        </div>
 
-            {/* Clinical Recommendations */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Clinical Recommendations</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Monitoring Level</h3>
-                  <p className="text-gray-900">{recommendations.monitoring_level}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Interventions</h3>
-                  <p className="text-gray-900">{recommendations.interventions}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Special Considerations</h3>
-                  <p className="text-gray-900">{recommendations.special_considerations}</p>
-                </div>
+        {/* Clinical Recommendations */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Clinical Recommendations</h3>
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-blue-700">
+                  <strong>Recommended Interventions:</strong> {recommendations.interventions}
+                </p>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Patient Narrative & Insights */}
-          <div className="space-y-8">
-            {/* Patient Narrative */}
-            {patientNarrative && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">What Happened</h2>
-                
+        {/* Patient Narrative & Insights */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Patient Narrative */}
+          {patientNarrative && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-medium text-gray-900">Patient Narrative</h2>
+              </div>
+              <div className="p-6">
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-gray-900 text-sm leading-relaxed">{patientNarrative}</p>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Narrative Insights */}
-            <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
-              <h2 className="text-xl font-semibold text-blue-900 mb-4">Key Things to Watch</h2>
-              
+          {/* Narrative Insights */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900">Clinical Insights</h2>
+            </div>
+            <div className="p-6">
               {narrativeInsights.length > 0 ? (
                 <div className="space-y-3">
                   {narrativeInsights.map((insight, index) => (
@@ -355,32 +379,23 @@ function ResultsContent() {
                 <p className="text-sm text-blue-700">Continue standard monitoring. No specific concerns identified from the narrative.</p>
               )}
             </div>
-
-            {/* Action Buttons */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="space-y-3">
-                <Link
-                  href="/ems-ai/triage"
-                  className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  New Assessment
-                </Link>
-                
-                <Link
-                  href="/ems-ai"
-                  className="w-full inline-flex items-center justify-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Back to Home
-                </Link>
-              </div>
-            </div>
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link 
+            href="/ems-ai/triage"
+            className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-center"
+          >
+            New Assessment
+          </Link>
+          <Link 
+            href="/ems-ai/behind-model" 
+            className="bg-gray-600 text-white px-6 py-3 rounded-md font-medium hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors text-center"
+          >
+            About This Tool
+          </Link>
         </div>
       </div>
     </div>
