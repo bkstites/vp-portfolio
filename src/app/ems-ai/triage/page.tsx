@@ -67,6 +67,12 @@ export default function TriagePage() {
         gcs_total: prediction.gcs_total.toString(),
         rpp_score: prediction.rpp_score.toString(),
         narrative_risk_score: prediction.narrative_risk_score.toString(),
+        case_type: prediction.case_type,
+        transport_decision: prediction.transport_decision,
+        priority_interventions: prediction.priority_interventions.join('|'),
+        protocol_primary: prediction.protocol_recommendations.primary,
+        protocol_interventions: prediction.protocol_recommendations.interventions.join('|'),
+        protocol_transport: prediction.protocol_recommendations.transport,
       });
       
       router.push(`/ems-ai/results?${params.toString()}`);

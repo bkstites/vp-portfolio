@@ -11,6 +11,12 @@ interface VitalSigns {
   gcs_motor: number;
 }
 
+interface CaseType {
+  caseType: string;
+  confidence: number;
+  symptoms: string[];
+}
+
 interface PredictionResult {
   rox_score: number;
   gcs_total: number;
@@ -22,6 +28,144 @@ interface PredictionResult {
   risk_level: 'Low' | 'Moderate' | 'High' | 'Critical';
   narrative_risk_score: number;
   narrative_insights: string[];
+  case_type: string;
+  protocol_recommendations: {
+    primary: string;
+    interventions: string[];
+    transport: string;
+  };
+  transport_decision: string;
+  priority_interventions: string[];
+}
+
+// Case classification system based on NJ BLS protocols
+const CASE_TYPES = [
+  {
+    caseType: 'Trauma',
+    keywords: ['accident', 'fall', 'hit', 'struck', 'collision', 'crash', 'injury', 'wound', 'bleeding', 'fracture', 'broken', 'laceration', 'trauma', 'mva', 'motor vehicle', 'car accident', 'pedestrian', 'gunshot', 'stab', 'penetrating'],
+    symptoms: ['pain', 'swelling', 'bruising', 'deformity', 'bleeding', 'shock']
+  },
+  {
+    caseType: 'Medical-Cardiac',
+    keywords: ['chest pain', 'heart', 'cardiac', 'arrhythmia', 'palpitation', 'pressure', 'squeezing', 'tightness', 'angina', 'heart attack', 'mi', 'myocardial infarction', 'cardiac arrest', 'cpr'],
+    symptoms: ['chest pain', 'shortness of breath', 'sweating', 'nausea', 'arm pain']
+  },
+  {
+    caseType: 'Medical-Respiratory',
+    keywords: ['shortness of breath', 'sob', 'difficulty breathing', 'respiratory', 'asthma', 'copd', 'wheezing', 'coughing', 'choking', 'dyspnea', 'respiratory distress', 'breathing problem'],
+    symptoms: ['shortness of breath', 'wheezing', 'cough', 'chest tightness', 'rapid breathing']
+  },
+  {
+    caseType: 'Medical-Neurological',
+    keywords: ['stroke', 'cva', 'seizure', 'convulsion', 'unconscious', 'altered mental status', 'ams', 'confusion', 'weakness', 'numbness', 'paralysis', 'facial droop', 'slurred speech', 'headache', 'migraine'],
+    symptoms: ['altered consciousness', 'weakness', 'numbness', 'speech problems', 'vision changes']
+  },
+  {
+    caseType: 'Obstetric',
+    keywords: ['pregnant', 'pregnancy', 'labor', 'contraction', 'delivery', 'baby', 'birth', 'obstetric', 'maternal', 'fetal', 'placenta', 'amniotic', 'bleeding pregnancy'],
+    symptoms: ['abdominal pain', 'contractions', 'bleeding', 'fluid leakage', 'fetal movement']
+  },
+  {
+    caseType: 'Pediatric',
+    keywords: ['child', 'baby', 'infant', 'toddler', 'pediatric', 'fever child', 'child sick', 'baby sick', 'infant distress'],
+    symptoms: ['fever', 'crying', 'lethargy', 'poor feeding', 'respiratory distress']
+  }
+];
+
+// NJ BLS Protocol Integration
+const NJ_BLS_PROTOCOLS = {
+  'Trauma': {
+    primary: 'Trauma Assessment Protocol',
+    interventions: ['ABCs', 'C-spine immobilization', 'Hemorrhage control', 'Shock management'],
+    transport: 'Trauma center if available, otherwise closest appropriate facility'
+  },
+  'Medical-Cardiac': {
+    primary: 'Cardiac Assessment Protocol',
+    interventions: ['ABCs', '12-lead ECG', 'Aspirin administration', 'Nitroglycerin if prescribed'],
+    transport: 'Cardiac receiving center preferred'
+  },
+  'Medical-Respiratory': {
+    primary: 'Respiratory Assessment Protocol',
+    interventions: ['ABCs', 'Oxygen therapy', 'Albuterol if prescribed', 'Position of comfort'],
+    transport: 'Closest appropriate facility'
+  },
+  'Medical-Neurological': {
+    primary: 'Neurological Assessment Protocol',
+    interventions: ['ABCs', 'Stroke assessment (FAST)', 'Seizure management', 'Neurological monitoring'],
+    transport: 'Stroke center if available'
+  },
+  'Obstetric': {
+    primary: 'Obstetric Assessment Protocol',
+    interventions: ['ABCs', 'Fetal monitoring', 'Position of comfort', 'Preparations for delivery'],
+    transport: 'Obstetric receiving center'
+  },
+  'Pediatric': {
+    primary: 'Pediatric Assessment Protocol',
+    interventions: ['ABCs', 'Pediatric assessment triangle', 'Age-appropriate interventions', 'Family support'],
+    transport: 'Pediatric center if available'
+  }
+};
+
+// Case classification function
+function classifyCase(narrative: string): CaseType {
+  const narrativeLower = narrative.toLowerCase();
+  let bestMatch: { caseType: string; confidence: number; symptoms: string[] } = {
+    caseType: 'Medical-General',
+    confidence: 0,
+    symptoms: []
+  };
+
+  for (const caseType of CASE_TYPES) {
+    let keywordMatches = 0;
+    const matchedSymptoms: string[] = [];
+
+    // Check keyword matches
+    for (const keyword of caseType.keywords) {
+      if (narrativeLower.includes(keyword)) {
+        keywordMatches++;
+      }
+    }
+
+    // Check symptom matches
+    for (const symptom of caseType.symptoms) {
+      if (narrativeLower.includes(symptom)) {
+        matchedSymptoms.push(symptom);
+      }
+    }
+
+    // Calculate confidence score
+    const confidence = (keywordMatches / caseType.keywords.length) * 100 + (matchedSymptoms.length * 10);
+    
+    if (confidence > bestMatch.confidence) {
+      bestMatch = {
+        caseType: caseType.caseType,
+        confidence: confidence,
+        symptoms: matchedSymptoms
+      };
+    }
+  }
+
+  return bestMatch;
+}
+
+// Get protocol recommendations based on case type
+function getProtocolRecommendations(caseType: string) {
+  const protocol = NJ_BLS_PROTOCOLS[caseType as keyof typeof NJ_BLS_PROTOCOLS];
+  
+  if (protocol) {
+    return {
+      primary: protocol.primary,
+      interventions: protocol.interventions,
+      transport: protocol.transport
+    };
+  }
+
+  // Default fallback
+  return {
+    primary: 'General Assessment Protocol',
+    interventions: ['ABCs', 'Vital signs', 'General assessment'],
+    transport: 'Closest appropriate facility'
+  };
 }
 
 // Calculate ROX score (SpO2/FiO2 ratio / Respiratory Rate) - validated in emergency medicine
@@ -426,6 +570,10 @@ export async function POST(request: NextRequest) {
     const patientNarrative = body.patient_narrative || '';
     const narrativeAnalysis = analyzeNarrative(patientNarrative);
 
+    // Classify case
+    const caseType = classifyCase(patientNarrative);
+    const protocolRecommendations = getProtocolRecommendations(caseType.caseType);
+
     // Integrate narrative risk with vital signs risk
     let finalRiskLevel = riskAssessment.risk_level;
     if (narrativeAnalysis.riskScore >= 15) {
@@ -436,6 +584,27 @@ export async function POST(request: NextRequest) {
     } else if (narrativeAnalysis.riskScore >= 8) {
       // Moderate narrative risk can escalate from Low to Moderate
       if (finalRiskLevel === 'Low') finalRiskLevel = 'Moderate';
+    }
+
+    // Determine transport decision based on case type and risk level
+    let transportDecision = protocolRecommendations.transport;
+    if (finalRiskLevel === 'Critical') {
+      transportDecision = 'EMERGENCY TRANSPORT - Immediate transport to appropriate facility';
+    } else if (finalRiskLevel === 'High') {
+      transportDecision = 'URGENT TRANSPORT - Transport within 30 minutes';
+    } else if (finalRiskLevel === 'Moderate') {
+      transportDecision = 'STANDARD TRANSPORT - Transport when available';
+    } else {
+      transportDecision = 'NON-URGENT TRANSPORT - Transport at convenience';
+    }
+
+    // Determine priority interventions based on case type and risk level
+    let priorityInterventions = [...protocolRecommendations.interventions];
+    if (finalRiskLevel === 'Critical') {
+      priorityInterventions.unshift('EMERGENCY INTERVENTIONS');
+      priorityInterventions.unshift('Immediate life support');
+    } else if (finalRiskLevel === 'High') {
+      priorityInterventions.unshift('URGENT INTERVENTIONS');
     }
 
     const result: PredictionResult = {
@@ -449,6 +618,10 @@ export async function POST(request: NextRequest) {
       risk_level: finalRiskLevel,
       narrative_risk_score: narrativeAnalysis.riskScore,
       narrative_insights: narrativeAnalysis.insights,
+      case_type: caseType.caseType,
+      protocol_recommendations: protocolRecommendations,
+      transport_decision: transportDecision,
+      priority_interventions: priorityInterventions
     };
 
     return NextResponse.json(result);

@@ -272,6 +272,14 @@ function ResultsContent() {
   const gcsTotal = searchParams.get('gcs_total') || '0';
   const rppScore = searchParams.get('rpp_score') || '0';
   const narrativeRiskScore = searchParams.get('narrative_risk_score') || '0';
+  
+  // Case classification and protocol data
+  const caseType = searchParams.get('case_type') || 'Medical-General';
+  const transportDecision = searchParams.get('transport_decision') || 'Standard transport';
+  const priorityInterventions = searchParams.get('priority_interventions')?.split('|') || [];
+  const protocolPrimary = searchParams.get('protocol_primary') || 'General Assessment Protocol';
+  const protocolInterventions = searchParams.get('protocol_interventions')?.split('|') || [];
+  const protocolTransport = searchParams.get('protocol_transport') || 'Closest appropriate facility';
 
   const recommendations = getClinicalRecommendations(riskLevel);
   
@@ -537,6 +545,75 @@ function ResultsContent() {
               ) : (
                 <p className="text-sm text-blue-700">Continue standard monitoring. No specific concerns identified from the narrative.</p>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Case Classification & Protocol Recommendations */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Case Classification */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900">Case Classification</h2>
+            </div>
+            <div className="p-6">
+              <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-blue-800">Case Type</span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {caseType}
+                  </span>
+                </div>
+                <p className="text-sm text-blue-700">
+                  Based on patient narrative analysis and clinical presentation
+                </p>
+              </div>
+              
+              <div className="bg-green-50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-green-800">Transport Decision</span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {riskLevel === 'Critical' ? 'Emergency' : riskLevel === 'High' ? 'Urgent' : 'Standard'}
+                  </span>
+                </div>
+                <p className="text-sm text-green-700">{transportDecision}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Protocol Recommendations */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900">Protocol Recommendations</h2>
+            </div>
+            <div className="p-6">
+              <div className="bg-purple-50 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-purple-800">Primary Protocol</span>
+                </div>
+                <p className="text-sm text-purple-700 font-medium">{protocolPrimary}</p>
+              </div>
+              
+              <div className="bg-orange-50 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-orange-800">Priority Interventions</span>
+                </div>
+                <div className="space-y-1">
+                  {priorityInterventions.slice(0, 3).map((intervention, index) => (
+                    <div key={index} className="flex items-center">
+                      <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                      <span className="text-sm text-orange-700">{intervention}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="bg-indigo-50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-indigo-800">Transport Protocol</span>
+                </div>
+                <p className="text-sm text-indigo-700">{protocolTransport}</p>
+              </div>
             </div>
           </div>
         </div>
