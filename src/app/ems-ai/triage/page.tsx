@@ -12,11 +12,12 @@ export default function EMSTriageForm() {
     gcs_eye: '',
     gcs_verbal: '',
     gcs_motor: '',
+    patient_narrative: '',
   });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
@@ -43,6 +44,7 @@ export default function EMSTriageForm() {
       const params = new URLSearchParams({
         ...form,
         ...result,
+        narrative_insights: result.narrative_insights?.join('|') || '',
       }).toString();
       
       router.push(`/ems-ai/results?${params}`);
@@ -222,6 +224,27 @@ export default function EMSTriageForm() {
                       placeholder="6"
                     />
                   </div>
+                </div>
+              </div>
+
+              {/* Patient Narrative Section */}
+              <div className="mt-6 space-y-4">
+                <h3 className="text-sm font-medium text-gray-700 uppercase tracking-wide">Patient Narrative</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tell us what's going on
+                  </label>
+                  <textarea 
+                    name="patient_narrative" 
+                    rows={3}
+                    value={form.patient_narrative} 
+                    onChange={handleChange} 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900" 
+                    placeholder="Describe the patient's condition, symptoms, or mechanism of injury..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Optional: Provide additional context about the patient's condition or mechanism of injury.
+                  </p>
                 </div>
               </div>
 
